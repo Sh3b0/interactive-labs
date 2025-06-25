@@ -1,3 +1,3 @@
 #!/bin/bash
 
-[ -f ~/hello/world ] && grep "Hello World" ~/test.txt > /dev/null
+[ -f ~/exercises/test.txt ] && grep "Hello World" ~/exercises/test.txt > /dev/null
