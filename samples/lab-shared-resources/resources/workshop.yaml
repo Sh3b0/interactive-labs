@@ -1,0 +1,35 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-shared-resources
+spec:
+  description: Overview of pre-creating shared resources.
+  duration: 30m
+  session:
+    applications:
+      console:
+        enabled: false
+      docker:
+        enabled: false
+      editor:
+        enabled: false
+      files:
+        enabled: true
+      registry:
+        enabled: false
+      terminal:
+        enabled: true
+        layout: split
+      vcluster:
+        enabled: false
+    namespaces:
+      budget: medium
+  title: Shared Resources
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-shared-resources-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**

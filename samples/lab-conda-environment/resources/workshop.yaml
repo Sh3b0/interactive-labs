@@ -1,0 +1,42 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-conda-environment
+spec:
+  description: Overview of working on Python applications.
+  duration: 30m
+  session:
+    applications:
+      editor:
+        enabled: true
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    dashboards:
+    - name: JupyterLab
+      url: $(ingress_protocol)://$(session_namespace)-jupyterlab.$(ingress_domain)/
+    env:
+    - name: ENABLE_JUPYTERLAB
+      value: "true"
+    ingresses:
+    - name: jupyterlab
+      port: 8888
+    namespaces:
+      security:
+        token:
+          enabled: false
+    resources:
+      memory: 1Gi
+      storage: 5Gi
+  title: Conda Environment
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-conda-environment-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**
+    image: conda-environment:*

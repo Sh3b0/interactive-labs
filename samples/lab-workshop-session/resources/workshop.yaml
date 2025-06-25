@@ -1,0 +1,30 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-workshop-session
+spec:
+  description: Overview of the containerized workshop environment.
+  duration: 30m
+  session:
+    applications:
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    dashboards:
+    - name: Docs
+      url: https://kubernetes.io/docs/home/
+    namespaces:
+      security:
+        token:
+          enabled: false
+  title: Workshop Session
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-workshop-session-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**

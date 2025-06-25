@@ -1,0 +1,38 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-extension-packages
+spec:
+  description: Overview of adding additional extension packages.
+  duration: 30m
+  session:
+    applications:
+      editor:
+        enabled: true
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    namespaces:
+      budget: medium
+  title: Extension Packages
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-extension-packages-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**
+    packages:
+    - files:
+      - image:
+          url: ghcr.io/educates/educates-extension-packages/educates:v3.3.2
+        path: .
+      name: educates
+    - files:
+      - image:
+          url: ghcr.io/educates/educates-extension-packages/vscode-java-tools-oci-overlay:v0.29.2
+        path: .
+      name: spring-academy-vscode-tools-via-overlay

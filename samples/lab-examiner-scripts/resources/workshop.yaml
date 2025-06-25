@@ -1,0 +1,29 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-examiner-scripts
+spec:
+  description: Overview of using self check examinations.
+  duration: 30m
+  session:
+    applications:
+      examiner:
+        enabled: true
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    namespaces:
+      budget: medium
+      security:
+        policy: baseline
+  title: Examiner Scripts
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-examiner-scripts-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**

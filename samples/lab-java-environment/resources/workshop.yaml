@@ -1,0 +1,83 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-java-environment
+spec:
+  description: Overview of working on Java applications.
+  duration: 30m
+  environment:
+    objects:
+    - apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: initializr
+        name: initializr
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: initializr
+        template:
+          metadata:
+            labels:
+              app: initializr
+          spec:
+            containers:
+            - image: ghcr.io/educates/educates-spring-initializr:2.2.0
+              imagePullPolicy: Always
+              name: dashboard
+              ports:
+              - containerPort: 8080
+                name: 8080-tcp
+                protocol: TCP
+    - apiVersion: v1
+      kind: Service
+      metadata:
+        labels:
+          app: initializr
+        name: initializr
+      spec:
+        ports:
+        - name: 8080-tcp
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+        selector:
+          app: initializr
+        type: ClusterIP
+  session:
+    applications:
+      editor:
+        enabled: true
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    dashboards:
+    - name: Initializr
+      url: $(ingress_protocol)://initializr-$(session_namespace).$(ingress_domain)
+    ingresses:
+    - host: initializr.$(workshop_namespace).svc.cluster.local
+      name: initializr
+      port: 8080
+      protocol: http
+    namespaces:
+      budget: large
+    resources:
+      memory: 2Gi
+  title: Java Environment
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-java-environment-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**
+      - /exercises/**
+    - image:
+        url: ghcr.io/educates/labs-spring-workshops-maven:latest
+      path: .m2
+    image: jdk17-environment:*

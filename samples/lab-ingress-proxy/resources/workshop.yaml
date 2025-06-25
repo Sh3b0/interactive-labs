@@ -1,0 +1,32 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-ingress-proxy
+spec:
+  description: Overview of adding ingresses for local processes.
+  duration: 30m
+  session:
+    applications:
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    dashboards:
+    - name: application
+      url: $(ingress_protocol)://application-$(session_namespace).$(ingress_domain)/
+    ingresses:
+    - name: application
+      port: 8001
+    namespaces:
+      budget: medium
+  title: Ingress Proxy
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-ingress-proxy-files:1.0.0
+      includePaths:
+      - /exercises/**
+      - /resources/**
+      - /workshop/**

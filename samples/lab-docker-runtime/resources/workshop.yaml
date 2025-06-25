@@ -1,0 +1,31 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-docker-runtime
+spec:
+  description: Overview of running Docker in Educates
+  duration: 30m
+  session:
+    applications:
+      console:
+        enabled: true
+      docker:
+        enabled: true
+      files:
+        enabled: true
+      registry:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    namespaces:
+      budget: medium
+  title: Docker Runtime
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-docker-runtime-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**

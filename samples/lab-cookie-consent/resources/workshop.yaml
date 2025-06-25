@@ -1,0 +1,159 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-cookie-consent
+spec:
+  description: Overview of embedding cookie consent.
+  environment:
+    images:
+      registries:
+      - content:
+        - destination: educates
+          prefix: /educates/educates-extension-packages/educates
+          stripPrefix: true
+        onDemand: true
+        urls:
+        - https://ghcr.io
+    objects:
+    - apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: kapp-installer
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: kapp-installer-$(workshop_namespace)
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+      - kind: ServiceAccount
+        name: kapp-installer
+        namespace: $(workshop_namespace)
+  session:
+    applications:
+      editor:
+        enabled: true
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    dashboards:
+    - name: Docs
+      url: https://docs.educates.dev/
+    namespaces:
+      budget: x-large
+      security:
+        policy: baseline
+        token:
+          enabled: false
+    objects:
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        name: $(session_name)-admin-vcluster-values
+        namespace: $(workshop_namespace)
+      stringData:
+        values.yaml: |
+          vcluster:
+            image: rancher/k3s:v1.29.0-k3s1
+          syncer:
+            extraArgs:
+            - --tls-san=admin-vcluster.$(session_namespace).svc.$(cluster_domain)
+            - --out-kube-config-server=https://admin-vcluster.$(session_namespace).svc.$(cluster_domain)
+            - --kube-config-context-name=admin
+          mapServices:
+            fromHost:
+            - from: $(workshop_namespace)/registry-$(session_name)
+              to: default/registry
+            - from: $(workshop_namespace)/localhost-$(session_name)
+              to: default/loopback
+          sync:
+            ingresses:
+              enabled: true
+          exportKubeConfig:
+            context: "admin"
+    - apiVersion: kappctrl.k14s.io/v1alpha1
+      kind: App
+      metadata:
+        name: $(session_name)-admin-vcluster-package
+        namespace: $(workshop_namespace)
+      spec:
+        deploy:
+        - kapp:
+            rawOptions:
+            - --app-changes-max-to-keep=5
+        fetch:
+        - helmChart:
+            name: vcluster
+            repository:
+              url: https://charts.loft.sh
+            version: 0.19.9
+        noopDelete: true
+        serviceAccountName: kapp-installer
+        syncPeriod: 720h
+        template:
+        - helmTemplate:
+            name: admin-vcluster
+            namespace: $(session_namespace)
+            valuesFrom:
+            - secretRef:
+                name: $(session_name)-admin-vcluster-values
+        - ytt:
+            inline:
+              paths:
+                overlays.yaml: |
+                  #@ load("@ytt:data", "data")
+                  #@ load("@ytt:overlay", "overlay")
+                  #@overlay/match by=overlay.all, expects="1+"
+                  ---
+                  metadata:
+                    #@overlay/match missing_ok=True
+                    ownerReferences:
+                      - apiVersion: training.educates.dev/v1beta1
+                        kind: WorkshopSession
+                        blockOwnerDeletion: true
+                        controller: true
+                        name: $(session_name)
+                        uid: $(workshop_session_uid)
+    - apiVersion: secrets.educates.dev/v1beta1
+      kind: SecretCopier
+      metadata:
+        name: $(session_name)-kubeconfig
+      spec:
+        rules:
+        - sourceSecret:
+            name: vc-admin-vcluster
+            namespace: $(session_namespace)
+          targetNamespaces:
+            nameSelector:
+              matchNames:
+              - $(workshop_namespace)
+          targetSecret:
+            name: $(session_name)-kubeconfig
+    volumeMounts:
+    - mountPath: /opt/kubeconfig
+      name: admin-vcluster-kubeconfig
+    volumes:
+    - name: admin-vcluster-kubeconfig
+      secret:
+        secretName: $(session_name)-kubeconfig
+  title: Cookie Consent
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-cookie-consent-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**
+      - /exercises/**
+      - /README.md
+    packages:
+    - files:
+      - image:
+          url: $(oci_image_cache)/educates:v3.3.2
+        path: .
+      name: educates

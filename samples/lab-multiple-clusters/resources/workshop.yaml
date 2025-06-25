@@ -1,0 +1,40 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-multiple-clusters
+spec:
+  description: Overview of working with multiple clusters.
+  duration: 30m
+  session:
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+    dashboards:
+    - name: VCluster 1
+      url: terminal:vc1
+    - name: VCluster 2
+      url: terminal:vc2
+    namespaces:
+      budget: medium
+      secondary:
+      - budget: large
+        name: $(session_namespace)-vc1
+        security:
+          policy: baseline
+      - budget: large
+        name: $(session_namespace)-vc2
+        security:
+          policy: baseline
+  title: Multiple Clusters
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-multiple-clusters-files:1.0.0
+      includePaths:
+      - /resources/**
+      - /workshop/**
+    - http:
+        url: https://github.com/loft-sh/vcluster/releases/download/v0.14.2/vcluster-linux-amd64
+      path: bin

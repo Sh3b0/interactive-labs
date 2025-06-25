@@ -1,0 +1,31 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: lab-session-namespace
+spec:
+  description: Overview of Kubernetes application deployment.
+  duration: 30m
+  session:
+    applications:
+      console:
+        enabled: true
+      files:
+        enabled: true
+      terminal:
+        enabled: true
+        layout: split
+    namespaces:
+      budget: medium
+      role: admin
+      security:
+        policy: restricted
+  title: Session Namespace
+  version: 1.0.0
+  workshop:
+    files:
+    - image:
+        url: ghcr.io/educates/labs-educates-showcase/lab-session-namespace-files:1.0.0
+      includePaths:
+      - /exercises/**
+      - /resources/**
+      - /workshop/**
