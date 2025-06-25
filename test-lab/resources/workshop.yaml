@@ -23,11 +23,7 @@ spec:
         enabled: true
       editor:
         enabled: true
-      console:
-        enabled: false
       docker:
         enabled: true
-      registry:
-        enabled: false
-      vcluster:
-        enabled: false
+      examiner:
+        enabled: true
