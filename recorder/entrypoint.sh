@@ -10,6 +10,6 @@ fi
 
 export USER=$HOSTNAME
 export TERM=xterm
-export SHELL="/bin/bash"
+export SHELL="/bin/fish"
 
-asciinema rec -i 1 -c 'bash'
+asciinema rec -i 1 -c 'fish'
