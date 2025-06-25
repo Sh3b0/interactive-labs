@@ -12,4 +12,4 @@ export USER=$HOSTNAME
 export TERM=xterm
 export SHELL="/bin/bash"
 
-asciinema rec -c 'bash'
+asciinema rec -i 1 -c 'bash'

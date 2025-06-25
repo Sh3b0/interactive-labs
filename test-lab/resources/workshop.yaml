@@ -1,17 +1,16 @@
 apiVersion: training.educates.dev/v1beta1
 kind: Workshop
 metadata:
-  name: "test-workshop"
+  name: "test-lab"
 spec:
   title: "Workshop"
   description: "Workshop description."
   publish:
-    image: "$(image_repository)/test-workshop-files:$(workshop_version)"
+    image: "$(image_repository)/test-lab-files:$(workshop_version)"
   workshop:
-    image: "$(image_repository)/base-image"
     files:
     - image:
-        url: $(image_repository)/test-workshop-files:$(workshop_version)
+        url: "$(image_repository)/test-lab-files:$(workshop_version)"
       includePaths:
       - /workshop/**
       - /exercises/**
@@ -24,7 +23,11 @@ spec:
         enabled: true
       editor:
         enabled: true
+      console:
+        enabled: false
       docker:
         enabled: true
       registry:
-        enabled: true
+        enabled: false
+      vcluster:
+        enabled: false
