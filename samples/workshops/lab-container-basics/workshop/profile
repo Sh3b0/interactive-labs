@@ -1,0 +1,2 @@
+export PS1_OLD="$PS1"
+export PS1="\n\[\033[33m\]\w\$ \[\033[0m\]"

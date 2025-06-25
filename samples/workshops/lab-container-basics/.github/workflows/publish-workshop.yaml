@@ -1,0 +1,22 @@
+name: Publish Workshop
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+-alpha.[0-9]+"
+      - "[0-9]+.[0-9]+-beta.[0-9]+"
+      - "[0-9]+.[0-9]+-rc.[0-9]+"
+
+jobs:
+  publish-workshop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create release
+        uses: vmware-tanzu-labs/educates-github-actions/publish-workshop@v6
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}

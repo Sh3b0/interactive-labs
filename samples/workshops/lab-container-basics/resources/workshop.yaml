@@ -1,32 +1,33 @@
 apiVersion: training.educates.dev/v1beta1
 kind: Workshop
 metadata:
-  name: "test-lab"
+  name: "lab-container-basics"
 spec:
-  title: "Workshop"
-  description: "Workshop description."
+  title: Container Basics
+  description: An interactive workshop on running applications in containers.
+  duration: 60m
   publish:
-    image: "$(image_repository)/test-lab-files:$(workshop_version)"
+    image: "$(image_repository)/lab-container-basics-files:$(workshop_version)"
   workshop:
     files:
     - image:
-        url: "$(image_repository)/test-lab-files:$(workshop_version)"
+        url: "$(image_repository)/lab-container-basics-files:$(workshop_version)"
       includePaths:
       - /workshop/**
       - /exercises/**
       - /README.md
   session:
     namespaces:
-      budget: medium
+      security:
+        token:
+          enabled: false
     applications:
       terminal:
         enabled: true
+        layout: split
       editor:
         enabled: true
       docker:
         enabled: true
-      examiner:
-        enabled: true
       registry:
         enabled: true
-

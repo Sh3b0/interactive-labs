@@ -1,0 +1,20 @@
+apiVersion: training.educates.dev/v1beta1
+kind: TrainingPortal
+metadata:
+  name: lab-k8s-fundamentals
+spec:
+  portal:
+    registration:
+      type: anonymous
+    updates:
+      workshop: true
+    sessions:
+      maximum: 1
+    workshop:
+      defaults:
+        reserved: 1
+        initial: 0
+  workshops:
+  - name: lab-k8s-fundamentals
+    expires: 60m
+    orphaned: 5m

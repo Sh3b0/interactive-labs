@@ -1,0 +1,21 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blog
+  labels:
+    app: blog
+spec:
+  rules:
+  - host: #@ "blog-{SESSION_NAMESPACE}.{INGRESS_DOMAIN}".format(**data.values)
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: blog
+            port:
+              number: 8080

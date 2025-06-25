@@ -1,0 +1,5 @@
+#!/bin/bash
+
+NODE=$1
+
+exec ssh ubuntu@$NODE.$SESSION_NAMESPACE.svc.cluster.local date

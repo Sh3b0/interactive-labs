@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -x
+
+TMPFILE=/tmp/examiner-$(basename "$0")
+
+trap "rm -f $TMPFILE" EXIT
+
+cat - > $TMPFILE
+
+NAME=$(jq -r ".name" $TMPFILE)
+
+kubectl run -it $NAME --image=busybox:latest --restart=Never
+
+exit 0

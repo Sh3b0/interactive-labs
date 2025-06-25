@@ -1,0 +1,28 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: "lab-integrated-editor"
+spec:
+  title: "Integrated Editor"
+  description: "Overview of integrated VS Code editor."
+  duration: 30m
+  publish:
+    image: $(image_repository)/labs-educates-showcase/lab-integrated-editor-files:$(workshop_version)
+  workshop:
+    files:
+      - image:
+          url: "$(image_repository)/labs-educates-showcase/lab-integrated-editor-files:$(workshop_version)"
+        includePaths:
+          - /resources/**
+          - /workshop/**
+  session:
+    namespaces:
+      budget: medium
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+      editor:
+        enabled: true
+      files:
+        enabled: true

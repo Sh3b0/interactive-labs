@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x
+
+kubectl get pod/$1 -o name
+
+if [ "$?" == "0" ]; then
+    exit 1
+fi
+
+exit 0

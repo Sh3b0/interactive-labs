@@ -1,0 +1,25 @@
+default:
+    @just --list
+
+build-app:
+    uv sync
+    uv run python manage.py collectstatic --noinput
+
+build-image:
+    docker build -t localhost:5001/lab-k8s-fundamentals-frontend:latest .
+
+push-image: build-image
+    docker push localhost:5001/lab-k8s-fundamentals-frontend:latest
+
+setup-app:
+    uv run python manage.py createsuperuser
+    uv run python manage.py loaddata posts.json
+
+clear-sessions:
+    uv run python manage.py clearsessions
+
+migrate-app:
+    uv run python manage.py migrate --noinput
+
+start-app:
+    ./start-app.sh

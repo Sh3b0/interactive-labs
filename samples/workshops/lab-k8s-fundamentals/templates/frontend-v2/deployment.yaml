@@ -1,0 +1,35 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: blog
+  name: blog
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      labels:
+        app: blog
+    spec:
+      securityContext:
+        runAsUser: 1001
+      containers:
+      - name: blog
+        image: ghcr.io/educates/lab-k8s-fundamentals-frontend:3.0
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          #@ if data.values.POLICY_ENGINE in ["pod-security-standards", "kyverno"]:
+          seccompProfile:
+            type: RuntimeDefault
+          #@ end
+        ports:
+        - containerPort: 8080

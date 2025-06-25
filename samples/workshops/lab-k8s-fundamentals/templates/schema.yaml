@@ -1,0 +1,6 @@
+#@data/values-schema
+
+---
+SESSION_NAMESPACE: "workshop"
+INGRESS_DOMAIN: "educates-local-dev.xyz"
+POLICY_ENGINE: "none"

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x
+
+kubectl get pods --field-selector=status.phase=Running -o name | egrep -e "^pod/$1$"
+
+if [ "$?" != "0" ]; then
+    exit 1
+fi
+
+exit 0

@@ -1,0 +1,17 @@
+.cache
+.config
+.docker
+.bash_history
+.gitconfig
+.kube
+.lesshst
+.local
+.ssh
+.theia
+.webdav
+.yarn
+*.swp
+__pycache__
+projects/frontend/.venv
+projects/frontend/data/
+projects/frontend/static

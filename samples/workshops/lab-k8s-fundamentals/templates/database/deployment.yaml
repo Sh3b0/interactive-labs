@@ -1,0 +1,79 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-db
+  labels:
+    app: blog-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: blog-db
+    spec:
+      securityContext:
+        runAsUser: 26
+        fsGroup: 26
+      containers:
+      - name: postgresql
+        image: bitnami/postgresql:17.5.0-debian-12-r8
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          #@ if data.values.POLICY_ENGINE in ["pod-security-standards", "kyverno"]:
+          seccompProfile:
+            type: RuntimeDefault
+          #@ end
+        resources:
+          limits:
+            memory: 512Mi
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        env:
+        - name: POSTGRESQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: blog-credentials
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: blog-credentials
+        - name: POSTGRESQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: database-name
+              name: blog-credentials
+        #! livenessProbe:
+        #!   exec:
+        #!     command:
+        #!     - "/usr/libexec/check-container"
+        #!     - "--live"
+        #!   initialDelaySeconds: 120
+        #!   timeoutSeconds: 10
+        #! readinessProbe:
+        #!   exec:
+        #!     command:
+        #!     - "/usr/libexec/check-container"
+        #!   initialDelaySeconds: 5
+        #!   timeoutSeconds: 1
+        volumeMounts:
+        - name: data
+          mountPath: "/bitnami/postgresql"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: blog-database

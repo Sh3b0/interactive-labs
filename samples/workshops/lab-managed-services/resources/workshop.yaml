@@ -1,0 +1,26 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: "lab-managed-services"
+spec:
+  title: "Managed Services"
+  description: "Overview of running additional managed processes."
+  duration: 30m
+  publish:
+    image: $(image_repository)/labs-educates-showcase/lab-managed-services-files:$(workshop_version)
+  workshop:
+    files:
+      - image:
+          url: "$(image_repository)/labs-educates-showcase/lab-managed-services-files:$(workshop_version)"
+        includePaths:
+          - /resources/**
+          - /workshop/**
+  session:
+    namespaces:
+      budget: medium
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+      files:
+        enabled: true

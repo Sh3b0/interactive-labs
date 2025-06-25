@@ -1,0 +1,60 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: "lab-virtual-cluster"
+spec:
+  title: "Virtual Cluster"
+  description: "Overview of optional virtual Kubernetes cluster."
+  duration: 30m
+  publish:
+    image: $(image_repository)/labs-educates-showcase/lab-virtual-cluster-files:$(workshop_version)
+  workshop:
+    files:
+      - image:
+          url: "$(image_repository)/labs-educates-showcase/lab-virtual-cluster-files:$(workshop_version)"
+        includePaths:
+          - /exercises/**
+          - /resources/**
+          - /workshop/**
+  session:
+    namespaces:
+      budget: large
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+      console:
+        enabled: true
+      vcluster:
+        enabled: true
+        objects:
+          - apiVersion: v1
+            kind: Secret
+            metadata:
+              name: ssh-keys
+              namespace: default
+            stringData:
+              id_rsa.pub: $(ssh_public_key)
+      files:
+        enabled: true
+    objects:
+    - apiVersion: kappctrl.k14s.io/v1alpha1
+      kind: App
+      metadata:
+        name: kapp-controller
+        namespace: $(session_namespace)-vc
+      spec:
+        noopDelete: true
+        syncPeriod: 24h
+        cluster:
+          namespace: default
+          kubeconfigSecretRef:
+            name: $(vcluster_secret)
+            key: config
+        fetch:
+        - http:
+            url: https://github.com/carvel-dev/kapp-controller/releases/download/v0.58.0/release.yml
+        template:
+        - ytt: {}
+        deploy:
+        - kapp: {}
