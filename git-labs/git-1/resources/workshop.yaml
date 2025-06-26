@@ -1,0 +1,28 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: "lab-git-repositories"
+spec:
+  title: "Git Repositories"
+  description: "Overview of using local hosted Git repositories."
+  duration: 30m
+  publish:
+    image: $(image_repository)/labs-educates-showcase/lab-git-repositories-files:$(workshop_version)
+  workshop:
+    files:
+      - image:
+          url: "$(image_repository)/labs-educates-showcase/lab-git-repositories-files:$(workshop_version)"
+        includePaths:
+          - /resources/**
+          - /workshop/**
+  session:
+    namespaces:
+      budget: medium
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+      git:
+        enabled: true
+      files:
+        enabled: true
