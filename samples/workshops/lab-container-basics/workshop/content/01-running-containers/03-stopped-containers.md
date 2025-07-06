@@ -4,7 +4,7 @@ title: Stopped Containers
 
 When containers are shutdown, the application processes are gone, but a copy of the state of the container state is kept. You can see a list of all containers, including the stopped containers by running:
 
-```execute
+```bash
 docker ps -a
 ```
 
@@ -25,7 +25,7 @@ When we ran the containers, we ran them in the foreground, with any output from 
 
 The output from the container was also captured to a log file. You can view the log file for a container, running or stopped, by running the `docker logs` command with the container ID as argument.
 
-```execute
+```bash
 docker logs `docker ps -ql`
 ```
 
@@ -35,19 +35,19 @@ Although there are some uses for a stopped container, they do consume space, so 
 
 To delete a single stopped container, you can use `docker rm` with the container ID as argument.
 
-```execute
+```bash
 docker rm `docker ps -ql`
 ```
 
 You should now have just the two stopped containers remaining.
 
-```execute
+```bash
 docker ps -a
 ```
 
 To delete all stopped containers, run:
 
-```execute
+```bash
 docker rm $(docker ps -aq)
 ```
 
@@ -55,18 +55,18 @@ Although `docker ps -a` will respond with running containers as well as stopped 
 
 There should now be no remaining containers.
 
-```execute
+```bash
 docker ps -a
 ```
 
 If you know that you do not need to interact with the stopped container after it has been shutdown, you can use the `--rm` option when running `docker run`.
 
-```execute
+```bash
 docker run --rm busybox date
 ```
 
 With this option, the stopped container will be automatically deleted.
 
-```execute
+```bash
 docker ps -a
 ```

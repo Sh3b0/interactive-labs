@@ -4,19 +4,19 @@ title: Workshop instructions
 
 We have a simple Python application that runs a hello-world server on port 8001.
 
-```execute
+```bash
 cat hello-world.py
 ```
 
 Let's run the application:
 
-```execute
+```bash
 python3 hello-world.py
 ```
 
 This application which runs inside our workshop environment is only accesible internally:
 
-```execute-2
+```bash-2
 curl -v localhost:8001
 ```
 

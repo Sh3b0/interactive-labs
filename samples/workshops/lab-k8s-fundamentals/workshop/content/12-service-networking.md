@@ -6,7 +6,7 @@ The `pod` corresponding to each instance of your application is ephemeral. If it
 
 Each `pod`, as well as having a unique name, is also assigned it's own IP address. You can see the IP addresses assigned to each `pod` by running:
 
-```execute
+```bash
 kubectl get pods -l app=blog -o wide
 ```
 
@@ -18,7 +18,7 @@ To add a stable IP address and hostname for an application, a `service` resource
 
 As with creating a `deployment`, the `kubectl` program provides methods for creating a `service`. These are `kubectl expose` and `kubectl create service`. We will skip these and use the resource definition. Run:
 
-```execute
+```bash
 cat frontend-v2/service.yaml
 ```
 
@@ -46,7 +46,7 @@ When used to create the resource object, this will result in a `service` named `
 
 Update the current application configuration by running:
 
-```execute
+```bash
 kubectl apply -f frontend-v2/
 ```
 
@@ -61,7 +61,7 @@ As the `frontend-v2` directory also contains our original `deployment.yaml` file
 
 To review details of the `service` created run:
 
-```execute
+```bash
 kubectl get service --selector app=blog -o wide
 ```
 
@@ -85,7 +85,7 @@ The `service` will know what the corresponding `pods` are that traffic should be
 
 This means that the IP addresses for the `pods` resulting from a query of:
 
-```execute
+```bash
 kubectl get pods -l app=blog -o name
 ```
 
@@ -93,7 +93,7 @@ will be registered as endpoints against the `service`.
 
 You can see the IP addresses of the `pods` registered against the `service` by running:
 
-```execute
+```bash
 kubectl get endpoints blog
 ```
 
@@ -111,7 +111,7 @@ where `{{< param session_namespace >}}` is the subdomain added for the namespace
 
 You can test it works by running:
 
-```execute
+```bash
 curl http://blog.{{< param session_namespace >}}.svc.cluster.local:8080
 ```
 

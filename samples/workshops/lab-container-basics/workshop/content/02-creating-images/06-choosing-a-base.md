@@ -18,19 +18,19 @@ For the remainder of this workshop we will be using a Fedora base image.
 
 Delete the `greeting` image created from the `busybox` image.
 
-```execute
+```bash
 docker rmi greeting
 ```
 
 Change location to the `~/greeting-v2` sub directory.
 
-```execute
+```bash
 cd ~/exercises/greeting-v2
 ```
 
 View the contents of the `Dockerfile` by running:
 
-```execute
+```bash
 cat Dockerfile
 ```
 
@@ -48,7 +48,7 @@ Only the `FROM` instruction has been changed. This time the `fedora:37` base ima
 
 Build the image by running:
 
-```execute
+```bash
 docker build -t greeting .
 ````
 
@@ -56,13 +56,13 @@ The build may take a little bit longer as the `fedora` base image needs to be pu
 
 When the build has completed check that the container image runs:
 
-```execute
+```bash
 docker run --rm greeting
 ```
 
 Run the image again but this time create an interactive shell.
 
-```execute
+```bash
 docker run -it --rm greeting /bin/bash
 ```
 
@@ -70,6 +70,6 @@ From the interactive shell, you can dig around inside the container image. You w
 
 When you are finished, shutdown the container by running:
 
-```execute
+```bash
 exit
 ```

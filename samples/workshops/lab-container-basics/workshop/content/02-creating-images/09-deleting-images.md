@@ -6,13 +6,13 @@ To delete images which you built locally, or which have been pulled down from a 
 
 To list what images exist locally run:
 
-```execute
+```bash
 docker images
 ```
 
 To delete the images which you built during this workshop run:
 
-```execute
+```bash
 docker rmi greeting:latest
 ```
 
@@ -20,7 +20,7 @@ docker rmi greeting:latest
 
 Because this image was re-tagged in order to push it to a remote registry, you will also need to delete that tagged version as well.
 
-```execute
+```bash
 docker rmi {{% param registry_host %}}/greeting:latest
 ```
 
@@ -28,7 +28,7 @@ docker rmi {{% param registry_host %}}/greeting:latest
 
 To delete the `busybox` image which was pulled down run:
 
-```execute
+```bash
 docker rmi busybox:latest
 ```
 
@@ -40,7 +40,7 @@ Error response from daemon: conflict: unable to remove repository reference "bus
 
 This is because there is still a stopped container which used this image:
 
-```execute
+```bash
 docker ps -a
 ```
 
@@ -48,19 +48,19 @@ The `docker` command will not by default allow you to delete an image which is s
 
 To remove the stopped container from before, because it was named `session`, you can use the command:
 
-```execute
+```bash
 docker rm session
 ```
 
 You should now be able to delete the image.
 
-```execute
+```bash
 docker rmi busybox:latest
 ```
 
 Note that when building images you can also end up with orphaned image layers which will not be deleted using the above commands. To delete any image layers which are no longer required, you can run:
 
-```execute
+```bash
 docker image prune
 ```
 

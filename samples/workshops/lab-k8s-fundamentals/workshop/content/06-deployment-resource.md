@@ -6,7 +6,7 @@ As already highlighted, a key resource created when deploying an application is 
 
 To view the `deployment` resource used for the front end web application, run:
 
-```execute
+```bash
 cat frontend/deployment.yaml
 ```
 
@@ -16,7 +16,7 @@ To create a new `deployment` resource what often happens is that a developer wil
 
 An alternative is to have `kubectl` create it for you. For a `deployment`, you can use the `kubectl create deployment` command.
 
-```execute
+```bash
 kubectl create deployment --help
 ```
 
@@ -24,7 +24,7 @@ For the deployment of the front end web application, the container image we want
 
 To see what `kubectl create deployment` would create for us run:
 
-```execute
+```bash
 kubectl create deployment blog --image ghcr.io/educates/lab-k8s-fundamentals-frontend:3.0 --port 8080 --replicas=2 --dry-run=client -o yaml
 ```
 
@@ -75,7 +75,7 @@ As it is closer to what you would want to do for a production environment, we wi
 
 For this first attempt towards replicating the front end web application, the output from `kubectl run` has been captured in the file `frontend-v1/deployment.yaml`. You can see the full contents of the directory by running:
 
-```execute
+```bash
 ls -las frontend-v1
 ```
 
@@ -83,7 +83,7 @@ As is, it is only the one file. We could at this point run `kubectl apply` on ju
 
 Create the `deployment` by running:
 
-```execute
+```bash
 kubectl apply -f frontend-v1/
 ```
 
@@ -95,7 +95,7 @@ deployment.apps/blog created
 
 Monitor progress of the deployment so you know when it has completed.
 
-```execute
+```bash
 kubectl rollout status deployment/blog
 ```
 

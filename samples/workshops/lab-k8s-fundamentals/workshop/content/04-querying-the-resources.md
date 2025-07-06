@@ -6,7 +6,7 @@ The web console for a Kubernetes cluster can be used to display a visual represe
 
 To see a list of all the deployments in the current namespace which have already been created, run:
 
-```execute
+```bash
 kubectl get deployment
 ```
 
@@ -20,7 +20,7 @@ blog-db   1/1     1            1           5m
 
 To narrow in on a specific resource, the name of that resource can be added to the command:
 
-```execute
+```bash
 kubectl get deployment/blog
 ```
 
@@ -33,7 +33,7 @@ blog   2/2     2            2           5m
 
 To see much more detailed information about a resource `kubectl describe` can be used.
 
-```execute
+```bash
 kubectl describe deployment/blog
 ```
 
@@ -56,12 +56,12 @@ Pod Template:
 
 This is still in a semi human readable form and isn't suitable for machine processing. To instead see the raw resource definition, you can use the `-o yaml` display output option to `kubectl get`.
 
-```execute
+```bash
 kubectl get deployment/blog -o yaml
 ```
 
 Or if you prefer to work with JSON rather than YAML, you can use:
 
-```execute
+```bash
 kubectl get deployment/blog -o json
 ```

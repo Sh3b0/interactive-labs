@@ -5,37 +5,37 @@ title: Workshop instructions
 When the embedded Git server is enabled, you can directly use it. Let's clone
 an empty project:
 
-```execute
+```bash
 git clone $GIT_PROTOCOL://$GIT_HOST/project.git
 ```
 
 Now that we have cloned that empty project, let's add some files to it:
 
-```execute
+```bash
 cd project
 ```
 
 Let's create some text file:
 
-```execute
+```bash
 date > date.txt
 ```
 
 Now, we will add the file to our project:
 
-```execute
+```bash
 git add .
 ```
 
 Let's commit the changes:
 
-```execute
+```bash
 git commit -m "Initial files."
 ```
 
 And push them to our repository:
 
-```execute
+```bash
 git push
 ```
 

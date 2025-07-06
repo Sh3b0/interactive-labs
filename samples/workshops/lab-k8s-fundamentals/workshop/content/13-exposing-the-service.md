@@ -6,7 +6,7 @@ In order to expose a `service` so that it is accessible outside of the Kubernete
 
 To see the definition for the `ingress` resource object we will use run:
 
-```execute
+```bash
 cat frontend-v3/ingress.yaml
 ```
 
@@ -41,7 +41,7 @@ When an external user accesses the host name from their web browser, they will u
 
 To update the configuration for the front end web application to add the `ingress` run:
 
-```execute
+```bash
 kubectl apply -f frontend-v3/
 ```
 
@@ -55,7 +55,7 @@ service/blog unchanged
 
 You can review the `ingress` resource which was created by running:
 
-```execute
+```bash
 kubectl get ingress -l app=blog
 ```
 

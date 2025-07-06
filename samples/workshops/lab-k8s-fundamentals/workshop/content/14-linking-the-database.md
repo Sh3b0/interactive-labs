@@ -8,7 +8,7 @@ To provide persistence for data, and have all instances of the application using
 
 To view the resources for the database, run:
 
-```execute
+```bash
 kubectl get deployment,service,pvc,secret -l app=blog-db -o name
 ```
 
@@ -27,7 +27,7 @@ In order to link the database to the front end web application, we need to tell 
 
 You can see what environment variables are already set for the front end web application by running:
 
-```execute
+```bash
 kubectl set env deployment/blog --list
 ```
 
@@ -52,7 +52,7 @@ For the database host, the host name will be the name of the database `service` 
 
 To see what the `deployment` configuration would look like with that set, we can run:
 
-```execute
+```bash
 kubectl set env deployment/blog DATABASE_HOST=blog-db --dry-run=client -o yaml
 ```
 
@@ -68,7 +68,7 @@ From the output, you can see that the `DATABASE_HOST` environment variable would
 
 The database credentials could be added in a similar way, but for this application we already have those stored in the `secret` for the database. You can view the `secret` called `blog-credentials`:
 
-```execute
+```bash
 kubectl get secret/blog-credentials -o yaml
 ```
 
@@ -85,7 +85,7 @@ What you see aren't the actual values as they have been obfuscated using base64 
 
 In order to use the same values, but not actually have to copy them, you can configure the `deployment` to inject the environment variables from the secret. To see how the configuration should look for this you can run:
 
-```execute
+```bash
 kubectl set env deployment/blog --from secret/blog-credentials --dry-run=client -o yaml
 ```
 
@@ -114,13 +114,13 @@ For these, the `spec.template.spec.containers.env` setting would need to be upda
 
 Combining these with the `DATABASE_HOST` environment variable we need to set the `deployment` to be:
 
-```execute
+```bash
 cat frontend-v4/deployment.yaml
 ```
 
 To apply this configuration run:
 
-```execute
+```bash
 kubectl apply -f frontend-v4/
 ```
 

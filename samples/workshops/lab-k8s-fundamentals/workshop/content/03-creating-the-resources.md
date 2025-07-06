@@ -4,7 +4,7 @@ title: Creating the Resources
 
 By doing a dry run deployment, you have seen the resources that will be created. To actually deploy the database component, now run:
 
-```execute
+```bash
 kubectl apply -f database/
 ```
 
@@ -21,7 +21,7 @@ The key resource in this list is `deployment`. It specifies the name of the cont
 
 To monitor progress of the deployment, and know when it has completed, you can run the command:
 
-```execute
+```bash
 kubectl rollout status deployment/blog-db
 ```
 
@@ -29,7 +29,7 @@ The argument is the full name of the resource, including the type of resource an
 
 With the database deployed, now deploy the front end web application by running:
 
-```execute
+```bash
 kubectl apply -f frontend/
 ```
 
@@ -44,7 +44,7 @@ ingress.networking.k8s.io/blog created
 
 Run:
 
-```execute
+```bash
 kubectl rollout status deployment/blog
 ```
 

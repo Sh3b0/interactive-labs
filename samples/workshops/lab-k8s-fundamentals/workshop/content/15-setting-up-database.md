@@ -8,19 +8,19 @@ To do this we need to execute some commands within the running container for one
 
 Grab the name of one of the `pods` which are running:
 
-```execute
+```bash
 POD=`kubectl get pod -l app=blog -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | head -1` && echo $POD
 ```
 
 and create an interactive terminal session.
 
-```execute
+```bash
 kubectl exec -it $POD -- bash
 ```
 
 To setup an administrator password run:
 
-```execute
+```bash
 just setup-app
 ```
 
@@ -52,7 +52,7 @@ A final thing this setup script will do is also load some initial posts.
 
 Exit the interactive shell by running:
 
-```execute
+```bash
 exit
 ```
 

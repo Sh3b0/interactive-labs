@@ -8,7 +8,7 @@ The workshop environment also provides you with a web based view into the Kubern
 
 Before continuing, verify that the `kubectl` command runs and the workshop environment is also functioning. To do this run:
 
-```execute
+```bash
 kubectl version
 ```
 

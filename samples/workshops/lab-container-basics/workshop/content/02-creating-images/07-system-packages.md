@@ -8,13 +8,13 @@ Although you strictly only need to install additional system packages that your 
 
 Change location to the `~/greeting-v3` sub directory.
 
-```execute
+```bash
 cd ~/exercises/greeting-v3
 ```
 
 View the contents of the `Dockerfile` by running:
 
-```execute
+```bash
 cat Dockerfile
 ```
 
@@ -37,13 +37,13 @@ Although having basic UNIX utilities available is useful, you don't need to have
 
 Build the image by running:
 
-```execute
+```bash
 docker build -t greeting .
 ```
 
 List the layers of the container image created:
 
-```execute
+```bash
 docker history greeting
 ```
 
@@ -57,13 +57,13 @@ When we added this `RUN` command, you may also have noted that we did not add it
 
 This order was chosen to take advantage of how caching works when performing builds. To illustrate how caching works, run:
 
-```execute
+```bash
 touch hello
 ```
 
 and run the build again.
 
-```execute
+```bash
 docker build -t greeting --progress plain .
 ```
 

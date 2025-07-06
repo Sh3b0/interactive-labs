@@ -30,6 +30,6 @@ This is done by adding the following snippet to the workshop resource definition
 
 You can verify that the Educates CLI is installed on this workshop:
 
-```execute
+```bash
 educates version
 ```

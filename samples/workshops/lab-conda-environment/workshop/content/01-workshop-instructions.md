@@ -17,6 +17,6 @@ spec:
 
 You can verify conda version that by running:
 
-```execute
+```bash
 conda --version
 ```

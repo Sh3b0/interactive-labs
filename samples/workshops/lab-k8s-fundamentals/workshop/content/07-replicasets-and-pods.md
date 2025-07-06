@@ -4,7 +4,7 @@ title: Replicasets and Pods
 
 Having created the `deployment` run:
 
-```execute
+```bash
 kubectl get all -o name -l app=blog
 ```
 
@@ -27,7 +27,7 @@ This is because `deployment` acts as a template for the creation of a `replicase
 
 To view the resource definition for the `replicaset` run:
 
-```execute
+```bash
 kubectl get replicaset -l app=blog -o yaml
 ```
 
@@ -68,7 +68,7 @@ This has been filled out with what was provided in the `spec` portion of the `de
 
 To view the resource definitions for the `pods` run:
 
-```execute
+```bash
 kubectl get pod -l app=blog -o yaml
 ```
 

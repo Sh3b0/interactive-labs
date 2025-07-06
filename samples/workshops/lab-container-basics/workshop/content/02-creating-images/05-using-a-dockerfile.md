@@ -6,19 +6,19 @@ Creating a container image interactively by running commands in a running contai
 
 Change location to the `~/greeting-v1` sub directory.
 
-```execute
+```bash
 cd ~/exercises/greeting-v1
 ```
 
 List the files in the directory.
 
-```execute
+```bash
 ls -las
 ```
 
 The `Dockerfile` defines the details of the base image from which a new container image is to be created, along with the instructions to create it. View the contents of the `Dockerfile` by running:
 
-```execute
+```bash
 cat Dockerfile
 ```
 
@@ -40,13 +40,13 @@ The `CMD` instruction is used to set the command which should be run if the cont
 
 To build a container image using the instructions in the `Dockerfile` run:
 
-```execute
+```bash
 docker build -t greeting .
 ```
 
 Look at the layers of the container image by running:
 
-```execute
+```bash
 docker history greeting
 ```
 
@@ -65,13 +65,13 @@ You can see that a layer has been created in the container image for the `COPY` 
 
 To run the container image, run:
 
-```execute
+```bash
 docker run --rm greeting
 ```
 
 Or to run an alternative command, use:
 
-```execute
+```bash
 docker run --rm greeting /goodbye
 ```
 

@@ -18,6 +18,6 @@ autostart: true
 
 Don't know how to delete the pod? One way is to execute the following command.
 
-```execute
+```bash
 kubectl delete pod one
 ```

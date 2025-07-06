@@ -6,7 +6,7 @@ In the previous exercise you executed the `date` command in the container starte
 
 If you want to create a container, and interact with it to run commands in it, you can run an interactive shell.
 
-```execute
+```bash
 docker run -it busybox sh
 ```
 
@@ -16,7 +16,7 @@ In this case we also abbreviated the name of the container image to `busybox`. W
 
 To see the list of processes running inside of the container, run:
 
-```execute
+```bash
 ps
 ```
 
@@ -32,7 +32,7 @@ Only processes started within the context of the container will be visible. Proc
 
 To see the list of containers which are running, you can run on the container host:
 
-```execute-2
+```bash-2
 docker ps
 ```
 
@@ -49,19 +49,19 @@ To access an existing container from the container host and run a command within
 
 When running `docker exec` you need to supply the ID of the container you want to access. To view the container ID for the very last container which was started you can run the command:
 
-```execute-2
+```bash-2
 docker ps -ql
 ```
 
 To create a second interactive terminal running in the existing container, you can run:
 
-```execute-2
+```bash-2
 docker exec -it `docker ps -ql` sh
 ```
 
 Run `ps` again in the original interactive terminal:
 
-```execute
+```bash
 ps
 ```
 
@@ -69,7 +69,7 @@ You should now see two shell processes running.
 
 Exit from the first interactive terminal by running:
 
-```execute
+```bash
 exit
 ```
 

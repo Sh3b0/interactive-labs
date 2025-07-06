@@ -6,13 +6,13 @@ The first method for constructing a container image is to run a container using 
 
 To illustrate this method, first start an instance of the `busybox` container with an interactive shell.
 
-```execute
+```bash
 docker run -it --name session busybox sh
 ```
 
 You would now run any commands to install additional packages. In the case of the `busybox` container image, it doesn't provide a package manager, so we will limit ourselves to creating an executable script file that we can run. To create the script file run:
 
-```execute
+```bash
 cat > hello << EOF
 #!/bin/sh
 
@@ -22,7 +22,7 @@ EOF
 
 Make the script file executable:
 
-```execute
+```bash
 chmod +x hello
 ```
 
@@ -30,7 +30,7 @@ In this case we create the script file by running a command inside of the contai
 
 Create a file on the local host by running:
 
-```execute-2
+```bash-2
 cat > goodbye << EOF
 #!/bin/sh
 
@@ -40,13 +40,13 @@ EOF
 
 Also make it executable:
 
-```execute-2
+```bash-2
 chmod +x goodbye
 ```
 
 Copy this script file into the container by running:
 
-```execute-2
+```bash-2
 docker cp goodbye session:/goodbye
 ```
 
@@ -54,19 +54,19 @@ Because we named the container with the name `session` we could use it in the ta
 
 Check that you can see both files from the container.
 
-```execute
+```bash
 ls -las
 ```
 
 Now exit from the container by running:
 
-```execute
+```bash
 exit
 ```
 
 At this point the container has been stopped, as we exited the interactive shell process that was keeping it running. You can see that it has stopped by running:
 
-```execute
+```bash
 docker ps -a
 ```
 
@@ -74,19 +74,19 @@ Although it has been stopped, because we didn't use the `--rm` option with `dock
 
 To create a container image from the saved state of the container, run:
 
-```execute
+```bash
 docker commit --change='CMD ["/hello"]' session greeting
 ```
 
 The name of the container image you created was `greeting`. To see details for the container image run:
 
-```execute
+```bash
 docker images
 ```
 
 To run the container image, run:
 
-```execute
+```bash
 docker run --rm greeting
 ```
 
@@ -94,6 +94,6 @@ You were able to run the container image without specifying what command to run 
 
 You can still run the container image with an alternative command if required.
 
-```execute
+```bash
 docker run --rm greeting /goodbye
 ```

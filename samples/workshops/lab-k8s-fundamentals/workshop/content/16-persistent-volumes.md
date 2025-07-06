@@ -8,7 +8,7 @@ To add persistent storage to an application, the first step is that you need to 
 
 The resource definition for the persistent volume claim we need to use can be seen by running:
 
-```execute
+```bash
 cat frontend-v5/persistentvolumeclaim.yaml
 ```
 
@@ -70,13 +70,13 @@ This indicates that the persistent volume should be mounted at the path `/opt/ap
 
 To see the updated `deployment` configuration run:
 
-```execute
+```bash
 cat frontend-v5/deployment.yaml
 ```
 
 To apply the configuration changes run:
 
-```execute
+```bash
 kubectl apply -f frontend-v5/
 ```
 

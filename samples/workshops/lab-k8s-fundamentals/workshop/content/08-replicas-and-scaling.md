@@ -6,7 +6,7 @@ One example of updating the `deployment` is to change the number of replicas, or
 
 The `kubectl` command provides an imperative command for updating the number of replicas. To increase the number of replicas to 3, run:
 
-```execute
+```bash
 kubectl scale deployment/blog --replicas 3
 ```
 
@@ -18,7 +18,7 @@ deployment.apps/blog scaled
 
 and if you run:
 
-```execute
+```bash
 kubectl get pods -l app=blog
 ```
 
@@ -30,13 +30,13 @@ The problem with having run `kubectl scale` is that the configuration in Kuberne
 
 To reset the configuration in Kubernetes back to what we had before running `kubectl scale` you can run `kubectl apply` with the original configuration we had in our local configuration file.
 
-```execute
+```bash
 kubectl apply -f frontend-v1/
 ```
 
 Run:
 
-```execute
+```bash
 kubectl get pods -l app=blog
 ```
 
@@ -48,7 +48,7 @@ This continual process whereby Kubernetes will ensure that the number of instanc
 
 You can simulate this scenario by deleting one of the `pods`. To see what happens, first run in one terminal:
 
-```execute-1
+```bash-1
 watch kubectl get pods -l app=blog
 ```
 
@@ -56,7 +56,7 @@ This will periodically run `kubectl get pods` so we can monitor the pods over ti
 
 Now from another terminal delete one of the `pods`.
 
-```execute-2
+```bash-2
 kubectl delete `kubectl get pod -l app=blog -o name | head -1`
 ```
 

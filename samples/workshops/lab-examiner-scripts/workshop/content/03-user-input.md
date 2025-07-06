@@ -23,6 +23,6 @@ inputs:
 
 Stop the watch for pods in the namespace.
 
-```execute-2
+```bash-2
 <ctrl-c>
 ```

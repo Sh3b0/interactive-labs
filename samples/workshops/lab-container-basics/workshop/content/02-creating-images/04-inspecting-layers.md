@@ -4,7 +4,7 @@ title: Inspecting Layers
 
 To inspect the layers of the container image you just created, run:
 
-```execute
+```bash
 docker history greeting
 ```
 
@@ -24,7 +24,7 @@ Because you constructed the container image from a running container, there is n
 
 To see the metadata for the container image, you can also run:
 
-```execute
+```bash
 docker inspect greeting
 ```
 

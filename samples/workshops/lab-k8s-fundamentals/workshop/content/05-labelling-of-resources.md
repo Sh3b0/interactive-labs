@@ -10,7 +10,7 @@ In order to indicate that a set of resources are related, they can be labelled. 
 
 In order to narrow the results down so it shows just the resources for the front end web application, we can add to the `kubectl get` command a label selector using the `-l` or `--selector` option.
 
-```execute
+```bash
 kubectl get deployment,service,ingress,secret,pvc -o name -l app=blog
 ```
 
@@ -33,7 +33,7 @@ The procedure for deleting an application would be to first use `kubectl get` wi
 
 Delete the front end web application now by running:
 
-```execute
+```bash
 kubectl delete deployment,service,ingress,secret,pvc -l app=blog
 ```
 

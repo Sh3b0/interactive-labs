@@ -6,25 +6,25 @@ To gain access to the container in which an instance of an application is runnin
 
 As with logging, you need to specify the particular `pod` you want to access, and if there are multiple containers running in the `pod`, specify which container using the `-c` or `--container` option.
 
-```execute
+```bash
 kubectl exec $POD -- env
 ```
 
 If you want to run an interactive terminal session, you need to ensure you use the `-i` or `--stdin` option, and the `-t` or `--tty` option.
 
-```execute
+```bash
 kubectl exec -it $POD -- bash
 ```
 
 From the interactive shell, you can view files in the file system.
 
-```execute
+```bash
 ls -las
 ```
 
 and can interact with the application processes:
 
-```execute
+```bash
 ps x
 ```
 
@@ -32,7 +32,7 @@ The only processes you will be able to see are those for the instance of your ap
 
 Run:
 
-```execute
+```bash
 exit
 ```
 

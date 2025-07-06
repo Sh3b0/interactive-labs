@@ -16,13 +16,13 @@ The next step is that you need to tag your container image with a name that inco
 
 The name of your image at this point is ``greeting``, so to tag it with a name including the name of the image registry, you need to run:
 
-```execute
+```bash
 docker tag greeting:latest {{% param registry_host %}}/greeting:latest
 ```
 
 To push the image to the image registry, then run:
 
-```execute
+```bash
 docker push {{% param registry_host %}}/greeting:latest
 ```
 
@@ -30,7 +30,7 @@ The command works out which image registry to push it to from the tag you added 
 
 Anyone with the appropriate access to the image registry could now pull it down to a different host by running:
 
-```execute
+```bash
 docker pull {{% param registry_host %}}/greeting:latest
 ```
 

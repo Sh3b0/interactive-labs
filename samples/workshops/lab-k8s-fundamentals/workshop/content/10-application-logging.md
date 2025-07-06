@@ -6,7 +6,7 @@ Each instance of an application runs in it's own `pod`.
 
 As you have already seen, you can list the `pods` for the front end web application using:
 
-```execute
+```bash
 kubectl get pods -l app=blog -o name
 ```
 
@@ -14,19 +14,19 @@ To access the log output for a specific instance of your application, you can us
 
 As we have multiple pods, we need to grab just one of the names.
 
-```execute
+```bash
 POD=`kubectl get pod -l app=blog -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | head -1` && echo $POD
 ```
 
 Then run `kubectl logs`:
 
-```execute
+```bash
 kubectl logs $POD
 ```
 
 Rather than identify a specific pod, you can also run `kubectl logs` against the deployment using:
 
-```execute
+```bash
 kubectl logs deployment/blog
 ```
 

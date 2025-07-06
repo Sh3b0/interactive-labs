@@ -10,7 +10,7 @@ The two main hosted image registry services that exist are [Docker Hub](https://
 
 To pull down and run an existing container image from an image registry using `docker` run:
 
-```execute
+```bash
 docker run docker.io/busybox:latest date
 ```
 
@@ -31,7 +31,7 @@ In this case the container image which was used was called `busybox`. This is a 
 
 If you run the command a second time:
 
-```execute
+```bash
 docker run docker.io/busybox:latest date
 ```
 
@@ -39,7 +39,7 @@ you will see that it executes the `date` command immediately and does not log an
 
 You can see what container images have been pulled down to the local environment by running:
 
-```execute
+```bash
 docker images
 ```
 
@@ -52,6 +52,6 @@ busybox     latest  be5888e67be6  5 days ago  1.22MB
 
 If necessary, `docker run` will pull down the container image the first time it is required. If you wanted to pull down images in advance of them being run, you can use the `docker pull` command:
 
-```execute
+```bash
 docker pull docker.io/busybox:latest
 ```
