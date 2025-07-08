@@ -1,3 +1,4 @@
-# Linux Workshop
+# Linux Workshops
 
-Refresh essential Linux skills
+Refresh essential Linux System Administration skills
+
