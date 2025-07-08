@@ -2,29 +2,29 @@
 
 ## For "Borrowing" content
 
-- https://labs.iximiuz.com/challenges
-- https://kodekloud.com/free-labs/linux/
-- [https://sadservers.com](http://sadservers.com/)
-- https://secureby.design/labs
-- https://overthewire.org/wargames/
-- https://linuxupskillchallenge.org/01/
-- https://linuxzoo.net/
-- https://killercoda.com/
+- <https://labs.iximiuz.com/challenges>
+- <https://kodekloud.com/free-labs/linux/>
+- <http://sadservers.com/>
+- <https://secureby.design/labs>
+- <https://overthewire.org/wargames/>
+- <https://linuxupskillchallenge.org/01/>
+- <https://linuxzoo.net/>
+- <https://killercoda.com/>
 
 ## For Deployment/Grading
 
-- https://github.com/educates/educates-training-platform
-- https://github.com/CTFd/CTFd?tab=readme-ov-file
-- https://asciinema.org/
-- https://classroom.github.com/login
-- https://github.com/huashengdun/webssh
-- https://github.com/overhangio/tutor?tab=readme-ov-file
-  - https://github.com/openedx/codejail?tab=readme-ov-file#installation
-  - https://github.com/openedx/XBlock
-- https://labs.play-with-docker.com/
-- https://webvm.io
-- https://github.com/educates/educates-training-platform
-- https://hobbyfarm.github.io/hobbyfarm/
+- <https://github.com/educates/educates-training-platform>
+- <https://github.com/CTFd/CTFd?tab=readme-ov-file>
+- <https://asciinema.org/>
+- <https://classroom.github.com/login>
+- <https://github.com/huashengdun/webssh>
+- <https://github.com/overhangio/tutor?tab=readme-ov-file>
+  - <https://github.com/openedx/codejail?tab=readme-ov-file#installation>
+  - <https://github.com/openedx/XBlock>
+- <https://labs.play-with-docker.com/>
+- <https://webvm.io>
+- <https://github.com/educates/educates-training-platform>
+- <https://hobbyfarm.github.io/hobbyfarm/>
 
 ## Automation categories
 
@@ -38,7 +38,7 @@
   - Not much experience, but interactive notebooks shows process & results
 - **Syadmin, DevOps**, **Networks**, and **Security**
   - Still facing issues. Let's break it down and focus on one thing at a time.
-- A bit of automation & fun for 
+- A bit of automation & fun for:
   - Security courses: through CTFs.
     - Issue of verifying integrity and prevent flag-sharing.
   - Networks courses: automatically graded labs in Packet Tracer.
