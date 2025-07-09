@@ -1,16 +1,16 @@
 apiVersion: training.educates.dev/v1beta1
 kind: Workshop
 metadata:
-  name: "upskill-challenge"
+  name: "linux"
 spec:
-  title: "Linux Upskill Challenge"
-  description: "Labs from linuxupskillchallenge.org"
+  title: "Linux Workshop"
+  description: "Workshop on essential Linux sysadmin skills"
   publish:
-    image: "$(image_repository)/upskill-challenge-files:$(workshop_version)"
+    image: "$(image_repository)/linux-files:$(workshop_version)"
   workshop:
     files:
     - image:
-        url: "$(image_repository)/upskill-challenge-files:$(workshop_version)"
+        url: "$(image_repository)/linux-files:$(workshop_version)"
       includePaths:
       - /workshop/**
       - /exercises/**
