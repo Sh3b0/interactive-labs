@@ -22,7 +22,9 @@ Interactive labs covering Linux, Git, and Docker
 
     ```bash
     cd <workshop-dir>
-    educates publish-workshop && educates deploy-workshop
+    educates publish-workshop
+    educates deploy-workshop        # Add to portal
+    educates docker workshop deploy # Quick test in docker
     ```
 
 4. Manage workshops
