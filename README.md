@@ -27,8 +27,6 @@ Transform your text-only practical workshops into an interactive format with Edu
     docker compose --file recorder.yaml up -d
     ```
 
-2. Access lab on <http://localhost:10081>
-
 ## Workshop Development in Docker
 
 1. Install Educates CLI
