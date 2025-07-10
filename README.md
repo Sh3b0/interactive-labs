@@ -2,6 +2,8 @@
 
 Transform your text-only practical workshops into an interactive format with Educates.dev
 
+![screenshot](./screenshot.png)
+
 ## Features
 
 - [x] Extended MarkDown [syntax](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) for interactive elements
