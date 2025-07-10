@@ -21,11 +21,20 @@ Transform your text-only practical workshops into an interactive format with Edu
 
 ## Demo
 
-1. Deploy the provided files in [compose](./compose) directory. Customize as needed.
+- Deploy the provided files in [compose](./compose) directory. Customize as needed.
 
     ```bash
     docker compose --file recorder.yaml up -d
     ```
+
+- Access the lab on localhost on the port specified in the compose file.
+
+- Demos included:
+
+  - `recorder.yaml`: minimal task scenario that integrates asciinema to record student session.
+  - `linux.yaml`: sysadmin course covering many topics, with ubuntu 24.04 environment.
+  - `git.yaml`: short course on git, with a local server for experimenting deployed in fedora 41 environment.
+  - `exam.yaml`: five tasks with recoding and auto checking (screenshot on top).
 
 ## Workshop Development in Docker
 
