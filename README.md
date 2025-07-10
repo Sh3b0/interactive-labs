@@ -1,8 +1,32 @@
 # Clumsy
 
-Interactive labs covering Linux, Git, and Docker
+Transform your text-only practical workshops into an interactive format with Educates.dev
 
-## Deployment in Docker
+## Features
+
+- [x] Extended MarkDown [syntax](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) for interactive elements
+- [x] Easily deployable on a student machine (only docker compose is required)
+- [x] Integrated terminal(s) environment can be cutomizabed to your workshop needs
+- [x] Record student lab sessions and view on asciicinema
+- Integrated applications (check = tested):
+  - [x] Access to docker CLI on the host
+  - [x] Local git server
+  - [ ] Local Container registry
+  - [ ] Local code (IDE) server (interactable from text)
+  - [ ] Slide viewer
+- [ ] Ability to use student's host terminal
+
+## Demo
+
+1. Deploy the provided files in [compose](./compose) directory. Customize as needed.
+
+    ```bash
+    docker compose --file recorder.yaml up -d
+    ```
+
+2. Access lab on <http://localhost:10081>
+
+## Workshop Development in Docker
 
 1. Install Educates CLI
 
@@ -40,7 +64,7 @@ Interactive labs covering Linux, Git, and Docker
     educates docker workshop deploy --host=127.0.0.1 --port=8080
     ```
 
-## Deployment on K8s
+## Workshop Deployment on K8s
 
 1. Install CLI tools
 
@@ -76,7 +100,9 @@ Interactive labs covering Linux, Git, and Docker
 
 ## KubeVirt Quick Start
 
-> <https://killercoda.com/kubevirt/scenario/kubevirt-101>
+KubeVirt allows running VMs in K8s!
+
+> *Interactive* quick start: <https://killercoda.com/kubevirt/scenario/kubevirt-101>
 
 ```bash
 # Download and deploy latest version
