@@ -1,16 +1,17 @@
 apiVersion: training.educates.dev/v1beta1
 kind: Workshop
 metadata:
-  name: "test-lab"
+  name: "exam"
 spec:
-  title: "Linux Test"
-  description: "Using Examiner to create an interactive test"
+  title: "Exam"
+  description: "Using examiner to create an interactive test"
   publish:
-    image: "$(image_repository)/test-lab-files:$(workshop_version)"
+    image: "ghcr.io/sh3b0/exam-files:latest"
   workshop:
+    image: sh3b0/base:latest
     files:
     - image:
-        url: "$(image_repository)/test-lab-files:$(workshop_version)"
+        url: "ghcr.io/sh3b0/exam-files:latest"
       includePaths:
       - /workshop/**
       - /exercises/**
@@ -24,9 +25,9 @@ spec:
       editor:
         enabled: false
       docker:
-        enabled: true
+        enabled: false
       examiner:
         enabled: true
       registry:
-        enabled: true
+        enabled: false
 
