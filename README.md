@@ -11,7 +11,7 @@ Transform your text-only practical workshops into an interactive format with Edu
 - [x] Integrated terminal(s) environment can be cutomized to your workshop needs
 - [x] Persisting session with docker volumes
 - [x] Record student lab sessions and view on asciicinema
-- Integrated applications (check = tested):
+- [ ] Integrated applications (check = tested):
   - [x] Access to docker CLI on the host
   - [x] Local git server
   - [ ] Local Container registry
