@@ -1,0 +1,58 @@
+name: git
+services:
+  workshop:
+    command:
+    - bash
+    - -c
+    - |
+      exec bash -s << "EOF"
+      mkdir -p /opt/eduk8s/config
+      cat > /opt/eduk8s/config/workshop.yaml << "EOS"
+      spec:
+        description: Workshop on Git
+        session:
+          applications:
+            docker:
+              enabled: false
+            editor:
+              enabled: false
+            examiner:
+              enabled: true
+            git:
+              enabled: true
+            registry:
+              enabled: false
+            terminal:
+              enabled: true
+          dashboards: []
+          ingresses: []
+        title: git
+      EOS
+      cat > /opt/eduk8s/config/vendir-assets-01.yaml << "EOS"
+      apiVersion: vendir.k14s.io/v1alpha1
+      directories:
+      - contents:
+        - image:
+            url: ghcr.io/sh3b0/git-files:latest
+          includePaths:
+          - /workshop/**
+          - /exercises/**
+          - /README.md
+          path: .
+        path: /opt/assets/files
+      kind: Config
+      EOS
+      exec start-container
+      EOF
+    image: ghcr.io/educates/educates-base-environment:3.3.2
+    networks:
+      default: {}
+    ports:
+    - "8001:10081"
+    user: "1001:0"
+    volumes:
+    - type: volume
+      source: workshop
+      target: /home/eduk8s
+volumes:
+  workshop: {}
