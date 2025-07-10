@@ -1,0 +1,34 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: "recorder"
+spec:
+  title: "Recorder"
+  description: "Demo on integrating asciinema with educates to record student sessions."
+  publish:
+    image: "ghcr.io/sh3b0/recorder-files:latest"
+  workshop:
+    image: sh3b0/base:latest
+    files:
+    - image:
+        url: "ghcr.io/sh3b0/recorder-files:latest"
+      includePaths:
+      - /workshop/**
+      - /exercises/**
+      - /README.md
+  session:
+    namespaces:
+      budget: medium
+    applications:
+      terminal:
+        enabled: true
+      editor:
+        enabled: false
+      docker:
+        enabled: true
+      examiner:
+        enabled: true
+      registry:
+        enabled: false
+      git:
+        enabled: false

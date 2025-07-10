@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+
+import os
+import signal
+
+# Restore the process signal handler for SIGPIPE otherwise the terminal will
+# exit immediately. This is the main reason we are using a Python script here
+# rather than a bash script.
+
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+# Ensure we are in the required directory for the workshop as the dashboard
+# process which spawns the terminal executes out of a different directory.
+
+os.chdir(os.environ.get("TERMINAL_HOME", os.path.expanduser("~")))
+
+# Setup arguments for executing the shell process as an interactive login shell
+# so the system shell profile scripts are executed. If there is a command script
+# for this specific named terminal session, delegate control to that instead of
+# launching directly into the shell prompt.
+
+args = ["terminal", "-il"]
+
+session = os.environ.get("TERMINAL_SESSION_ID", "")
+
+workshop_dirs = [
+    "/home/eduk8s/workshop",
+    "/opt/workshop",
+    "/opt/eduk8s/workshop"
+]
+
+def is_executable(path):
+    return os.path.isfile(path) and os.access(path, os.X_OK)
+
+script = None
+
+if session:
+    for dir in workshop_dirs:
+        if is_executable(f"{dir}/terminal/{session}.sh"):
+            script = f"{dir}/terminal/{session}.sh"
+            break
+
+if script is None:
+    for dir in workshop_dirs:
+        if is_executable(f"{dir}/terminal.sh"):
+            script = f"{dir}/terminal.sh"
+            break
+
+if script is not None:
+    args.extend(["-c", script])
+
+# Execute the shell process in place of this process.
+
+os.execv("/bin/bash", args)

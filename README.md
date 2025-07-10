@@ -2,11 +2,50 @@
 
 Interactive labs covering Linux, Git, and Docker
 
-## Deployment
+## Deployment in Docker
 
-1. Install CLI tools (e.g., in /usr/local/bin)
+1. Install Educates CLI
 
     ```bash
+    cd /usr/local/bin
+    curl -o educates -sL https://github.com/educates/educates-training-platform/releases/latest/download/educates-linux-amd64
+    chmod +x educates
+    ```
+
+2. Create a new workshop
+
+    ```bash
+    educates new-workshop
+    ```
+
+3. Customize `resources/workshop.yaml` as needed
+    - `spec.image`: base lab image
+        - Default (fedora-based): ghcr.io/educates/educates-base-environment
+        - Custom (ubuntu-based): sh3b0/base
+    - `spec.publish.image`: where to publish the built image with lab files
+    - `spec.workshop.files[*].image`: where to download an image with lab files (to be overlayed on top of base image)
+
+4. Use GH [action](https://github.com/educates/educates-github-actions/tree/main/publish-workshop) to publish lab files to GHCR or do it manually.
+
+    ```bash
+    cd <workshop-dir>
+    export CR_PAT= # Token with write:package permissions
+    echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
+    educates publish-workshop
+    ```
+
+5. Deploy workshop in docker
+
+    ```bash
+    educates docker workshop deploy --host=127.0.0.1 --port=8080
+    ```
+
+## Deployment on K8s
+
+1. Install CLI tools
+
+    ```bash
+    cd /usr/local/bin
     curl -o educates -sL https://github.com/educates/educates-training-platform/releases/latest/download/educates-linux-amd64 && chmod +x educates
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -18,13 +57,12 @@ Interactive labs covering Linux, Git, and Docker
     educates create-cluster
     ```
 
-3. Deploy workshop
+3. Deploy workshop to training portal
 
     ```bash
     cd <workshop-dir>
     educates publish-workshop
-    educates deploy-workshop        # Add to portal
-    educates docker workshop deploy # Quick test in docker
+    educates deploy-workshop
     ```
 
 4. Manage workshops

@@ -1,0 +1,10 @@
+NOTES.md
+.vscode/**
+.vscode-test/**
+tests/*
+#out/test/**
+src/**
+**/tsconfig.json
+**/.eslintrc.json
+**/*.map
+**/*.ts

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eo pipefail
+set -x
+
+XDG_CONFIG_HOME=/tmp/.config
+export XDG_CONFIG_HOME
+
+# Start the workshop renderer.
+
+cd /opt/renderer
+
+NODE_PATH=`pwd`/node_modules
+export NODE_PATH
+
+exec node build/backend/server.js

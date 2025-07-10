@@ -1,16 +1,17 @@
 apiVersion: training.educates.dev/v1beta1
 kind: Workshop
 metadata:
-  name: "linux"
+  name: "recorder"
 spec:
-  title: "Linux Workshop"
-  description: "Workshop on essential Linux sysadmin skills"
+  title: "Recorder"
+  description: "Demo on integrating asciinema with educates to record student sessions."
   publish:
-    image: "$(image_repository)/linux-files:$(workshop_version)"
+    image: "ghcr.io/sh3b0/recorder-files:latest"
   workshop:
+    image: sh3b0/base:latest
     files:
     - image:
-        url: "$(image_repository)/linux-files:$(workshop_version)"
+        url: "ghcr.io/sh3b0/recorder-files:latest"
       includePaths:
       - /workshop/**
       - /exercises/**
@@ -19,18 +20,15 @@ spec:
     namespaces:
       budget: medium
     applications:
-      examiner:
-        enabled: true
       terminal:
         enabled: true
       editor:
         enabled: false
-      console:
-        enabled: false
       docker:
+        enabled: false
+      examiner:
         enabled: true
       registry:
         enabled: false
-      vcluster:
+      git:
         enabled: false
-

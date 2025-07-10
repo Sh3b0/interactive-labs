@@ -1,0 +1,81 @@
+# This file is sourced by all externally initiated shell processes created
+# within the container, as a side effect of how shells handle the BASH_ENV,
+# PROMPT_COMMAND and ENV environment variables set in the Dockerfile. It is
+# intended to catch the case of shell processes created when exec'ing into a
+# container so that the user environment can be setup correctly, including any
+# workshop specific environment.
+
+unset BASH_ENV PROMPT_COMMAND ENV
+
+# Add an entry to the /etc/passwd file if required. This is done to support
+# running on OpenShift where containers are run as a random uid. This may not
+# technically be required in newer OpenShift versions, which will perform a
+# similar fix up when starting a container.
+
+STATUS=0 && whoami &> /dev/null || STATUS=$? && true
+
+if [ x"$STATUS" != x"0" ]; then
+    echo "$(id -u):x:$(id -u):$(id -g)::`pwd`:/bin/bash" >> /etc/passwd
+fi
+
+# In the case of this file being sourced prior to the start-container script run
+# as process ID 1 we need to abort early as the workshop files may not have been
+# downloaded into the container at that point.
+
+test "$$" = "1" && return
+
+# If the shell process is created by sshd, we need to inject the environment
+# variables which are usually inherited from the container image environment,
+# as well as environment variables set by the start-container script.
+
+if [ "$PPID" != "0" ]; then
+    case $(ps -o comm= -p "$PPID") in
+        sshd|*/sshd)
+            if [ -f $HOME/.local/share/workshop/workshop-env-session.sh ]; then
+                set -a; . $HOME/.local/share/workshop/workshop-env-session.sh; set +a
+            fi
+            ;;
+    esac
+fi
+
+# Source profiles for Educates, any downloads packages, and the workshop.
+
+if [ -f $HOME/.local/share/workshop/workshop-env-builtin.sh ]; then
+    set -a; . $HOME/.local/share/workshop/workshop-env-builtin.sh; set +a
+fi
+
+for i in /opt/eduk8s/etc/profile.d/*.sh /opt/eduk8s/etc/profile.d/sh.local; do
+    if [ -r "$i" ]; then
+        . "$i" >/dev/null
+    fi
+done
+
+if [ -f $HOME/.local/share/workshop/workshop-env-packages.sh ]; then
+    set -a; . $HOME/.local/share/workshop/workshop-env-packages.sh; set +a
+fi
+
+for i in /opt/packages/*/profile.d/*.sh /opt/packages/*/profile.d/sh.local; do
+    if [ -r "$i" ]; then
+        . "$i" >/dev/null
+    fi
+done
+
+if [ -f $HOME/.local/share/workshop/workshop-env-content.sh ]; then
+    set -a; . $HOME/.local/share/workshop/workshop-env-content.sh; set +a
+fi
+
+for i in /opt/workshop/profile.d/*.sh /opt/workshop/profile.d/sh.local; do
+    if [ -r "$i" ]; then
+        . "$i" >/dev/null
+    fi
+done
+
+if [ -f $HOME/.local/share/workshop/workshop-env-homedir.sh ]; then
+    set -a; . $HOME/.local/share/workshop/workshop-env-homedir.sh; set +a
+fi
+
+for i in $HOME/workshop/profile.d/*.sh $HOME/workshop/profile.d/sh.local; do
+    if [ -r "$i" ]; then
+        . "$i" >/dev/null
+    fi
+done

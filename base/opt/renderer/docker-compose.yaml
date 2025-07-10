@@ -1,0 +1,11 @@
+services:
+  renderer:
+    image: renderer
+    ports:
+      - 10082:10082
+
+  base:
+    image: ghcr.io/educates/educates-base-environment
+    ports:
+      - 10081:10081
+  

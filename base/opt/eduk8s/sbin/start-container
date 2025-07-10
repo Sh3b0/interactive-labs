@@ -1,0 +1,366 @@
+#!/bin/bash
+
+set -x
+
+set -eo pipefail
+
+# Make sure we are in the home directory because when in a dev container the
+# initial current working directory of the terminal in VS Code can be a
+# different directory.
+
+cd $HOME
+
+# Create directory for caching log files and other Educates data files.
+
+mkdir -p $HOME/.local/share/workshop
+
+# Set defaults for all the workshop variables. These will be overridden when
+# deploying workshops using the operator, but will be used as a fallback when
+# deploying workshops using docker. Note that INGRESS_PORT_SUFFIX should not
+# be overriden if environment variable set but is empty.
+
+WORKSHOP_NAME=${WORKSHOP_NAME:-workshop}
+TRAINING_PORTAL=${TRAINING_PORTAL:-workshop}
+ENVIRONMENT_NAME=${ENVIRONMENT_NAME:-workshop}
+WORKSHOP_NAMESPACE=${WORKSHOP_NAMESPACE:-workshop}
+SESSION_NAMESPACE=${SESSION_NAMESPACE:-workshop}
+SESSION_NAME=${SESSION_NAME:-workshop}
+
+SESSION_HOSTNAME=${SESSION_HOSTNAME:-workshop.127-0-0-1.nip.io}
+INGRESS_PROTOCOL=${INGRESS_PROTOCOL:-http}
+INGRESS_DOMAIN=${INGRESS_DOMAIN:-127-0-0-1.nip.io}
+INGRESS_PORT_SUFFIX=${INGRESS_PORT_SUFFIX-:10081}
+
+export WORKSHOP_NAME
+export TRAINING_PORTAL
+export ENVIRONMENT_NAME
+export WORKSHOP_NAMESPACE
+export SESSION_NAMESPACE
+export SESSION_NAME
+
+export SESSION_HOSTNAME
+export INGRESS_PROTOCOL
+export INGRESS_DOMAIN
+export INGRESS_PORT_SUFFIX
+
+unset INGRESS_PORT
+
+if [[ ${INGRESS_PORT_SUFFIX::1} == ":" ]]
+then
+    INGRESS_PORT="${INGRESS_PORT_SUFFIX:1}"
+fi
+
+if [ x"$INGRESS_PORT" == x"" ]; then
+    if [ x"$INGRESS_PROTOCOL" == x"https" ]; then
+        INGRESS_PORT=443
+    else
+        INGRESS_PORT=80
+    fi
+fi
+
+export INGRESS_PORT
+
+# Download any remote workshop content hosted on a remote server. The primary
+# way of doing this is using vendir, the configuration for which is mounted into
+# the workshop container by the operator. An older obsolete way is still
+# supported with a custom script to download content. For the latter, the
+# location of where the content was downloaded from will be saved in the
+# $HOME/.local/share/workshop/workshop-files.txt file for use when doing manual
+# updates. In both cases we will not fail when we can't download the workshop
+# content. The file $HOME/.local/share/workshop/download-workshop.failed will be
+# created in the event of an error so that the dashboard can display an error.
+# Output from downloading the files is saved for debugging purposes to the file
+# $HOME/.local/share/workshop/download-workshop.log.
+
+DOWNLOAD_LOGFILE=$HOME/.local/share/workshop/download-workshop.log
+DOWNLOAD_FAILED=$HOME/.local/share/workshop/download-workshop.failed
+
+SETUP_LOGFILE=$HOME/.local/share/workshop/setup-scripts.log
+SETUP_FAILED=$HOME/.local/share/workshop/setup-scripts.failed
+
+if [ -f /opt/eduk8s/config/vendir-assets-01.yaml -o -f /opt/eduk8s/config/vendir-packages.yaml ]; then
+    if [ ! -f /opt/assets/vendir-assets-01.yaml -a ! -f /opt/packages/vendir-packages.yaml ]; then
+        # In this case we are running in the main container and need to do the
+        # download of the workshop content using vendir.
+
+        (vendir-workshop || touch $DOWNLOAD_FAILED) 2>&1 | tee -a $DOWNLOAD_LOGFILE
+    else
+        # In this case workshop content was already downloaded from an init
+        # container so we only need to merge the workshop content. Copy the
+        # marker file for a failure and the log file to the same location as
+        # when the download is done in the main container.
+
+        if [ -f /opt/assets/download-workshop.failed ]; then
+            touch $DOWNLOAD_FAILED
+        fi
+
+        if [ -f /opt/assets/download-workshop.log ]; then
+            cat /opt/assets/download-workshop.log >> $DOWNLOAD_LOGFILE
+        fi
+
+        merge-workshop /opt/assets/files | tee -a $DOWNLOAD_LOGFILE
+    fi
+elif [ -d /opt/assets/files ]; then
+    merge-workshop /opt/assets/files
+else
+    # In this case downloading workshop the old way which has been deprecated.
+
+    DOWNLOAD_URL=$(workshop-definition -r '(.spec.content.files // "")')
+
+    if [ x"$DOWNLOAD_URL" != x"" ]; then
+        (download-workshop "$DOWNLOAD_URL" || touch $DOWNLOAD_FAILED) 2>&1 | tee -a $DOWNLOAD_LOGFILE
+    fi
+fi
+
+# Determine what bundled applications are enabled. These variables will control
+# what is started up from supervisord and also checked by the gateway, rather
+# than the original YAML, so environment variables can be used to override YAML
+# values if necessary.
+
+SUPERVISOR_ONLY=${SUPERVISOR_ONLY:-false}
+WORKSHOP_ONLY=${WORKSHOP_ONLY:-false}
+TERMINAL_ONLY=${TERMINAL_ONLY:-false}
+
+ENABLE_GATEWAY=${ENABLE_GATEWAY:-true}
+
+ENABLE_DASHBOARD=${ENABLE_DASHBOARD:-true}
+
+ENABLE_CONSOLE=$(application-enabled console false)
+ENABLE_DOCKER=$(application-enabled docker false)
+ENABLE_EDITOR=$(application-enabled editor false)
+ENABLE_EXAMINER=$(application-enabled examiner false)
+ENABLE_GIT=$(application-enabled git false)
+ENABLE_FILES=$(application-enabled files false)
+ENABLE_REGISTRY=$(application-enabled registry false)
+ENABLE_SLIDES=$(application-enabled slides false)
+ENABLE_SSHD=$(application-enabled sshd false)
+ENABLE_TERMINAL=$(application-enabled terminal true)
+ENABLE_UPLOADS=$(application-enabled uploads false)
+ENABLE_VCLUSTER=$(application-enabled vcluster false)
+ENABLE_WEBDAV=$(application-enabled webdav false)
+ENABLE_WORKSHOP=$(application-enabled workshop true)
+
+if [ x"$SUPERVISOR_ONLY" == x"true" ]; then
+    ENABLE_GATEWAY=false
+
+    ENABLE_DASHBOARD=false
+
+    ENABLE_CONSOLE=false
+    ENABLE_DOCKER=false
+    ENABLE_EDITOR=false
+    ENABLE_EXAMINER=false
+    ENABLE_FILES=false
+    ENABLE_GIT=false
+    ENABLE_REGISTRY=false
+    ENABLE_SLIDES=false
+    ENABLE_SSHD=false
+    ENABLE_TERMINAL=false
+    ENABLE_UPLOADS=false
+    ENABLE_VCLUSTER=false
+    ENABLE_WEBDAV=false
+    ENABLE_WORKSHOP=false
+fi
+
+if [ x"$WORKSHOP_ONLY" == x"true" ]; then
+    ENABLE_GATEWAY=true
+
+    ENABLE_DASHBOARD=false
+
+    ENABLE_CONSOLE=false
+    ENABLE_DOCKER=false
+    ENABLE_EDITOR=false
+    ENABLE_EXAMINER=false
+    ENABLE_FILES=false
+    ENABLE_GIT=false
+    ENABLE_REGISTRY=false
+    ENABLE_SLIDES=false
+    ENABLE_SSHD=false
+    ENABLE_TERMINAL=false
+    ENABLE_UPLOADS=false
+    ENABLE_VCLUSTER=false
+    ENABLE_WEBDAV=false
+    ENABLE_WORKSHOP=true
+
+    DEFAULT_PAGE=workshop
+fi
+
+if [ x"$TERMINAL_ONLY" == x"true" ]; then
+    ENABLE_GATEWAY=true
+
+    ENABLE_DASHBOARD=false
+
+    ENABLE_CONSOLE=false
+    ENABLE_DOCKER=false
+    ENABLE_EDITOR=false
+    ENABLE_EXAMINER=false
+    ENABLE_FILES=false
+    ENABLE_GIT=false
+    ENABLE_REGISTRY=false
+    ENABLE_SLIDES=false
+    ENABLE_SSHD=false
+    ENABLE_TERMINAL=true
+    ENABLE_UPLOADS=false
+    ENABLE_VCLUSTER=false
+    ENABLE_WEBDAV=false
+    ENABLE_WORKSHOP=false
+
+    DEFAULT_PAGE=terminal
+fi
+
+export SUPERVISOR_ONLY
+export WORKSHOP_ONLY
+export TERMINAL_ONLY
+
+export ENABLE_GATEWAY
+
+export ENABLE_DASHBOARD
+
+export ENABLE_CONSOLE
+export ENABLE_DOCKER
+export ENABLE_EDITOR
+export ENABLE_EXAMINER
+export ENABLE_FILES
+export ENABLE_GIT
+export ENABLE_REGISTRY
+export ENABLE_SLIDES
+export ENABLE_SSHD
+export ENABLE_TERMINAL
+export ENABLE_UPLOADS
+export ENABLE_VCLUSTER
+export ENABLE_WEBDAV
+export ENABLE_WORKSHOP
+
+export DEFAULT_PAGE
+
+# Work out what variation of the workshop renderer needs to be enabled.
+
+WORKSHOP_RENDERER="local"
+
+WORKSHOP_URL=$(workshop-definition -r '(.spec.session.applications.workshop.url // "")')
+WORKSHOP_PROXY=$(workshop-definition -r '(.spec.session.applications.workshop.proxy // "")')
+WORKSHOP_PATH=$(workshop-definition -r '(.spec.session.applications.workshop.path // "")')
+
+if [ x"$WORKSHOP_URL" != x"" ]; then
+    WORKSHOP_RENDERER="remote"
+elif [ x"$WORKSHOP_PROXY" != x"" ]; then
+    WORKSHOP_RENDERER="proxy"
+elif [ x"$WORKSHOP_PATH" != x"" ]; then
+    WORKSHOP_RENDERER="static"
+fi
+
+export WORKSHOP_RENDERER
+
+# Save away all the environment variables which we need to be available later
+# if an SSH terminal session is created. This needs to include some environment
+# passed in from the deployment, and some which are calculated in this script.
+# We capture PATH so that we include what was defined for the container image.
+
+cat > $HOME/.local/share/workshop/workshop-env-session.sh << EOF
+PATH="$PATH"
+PLATFORM_ARCH="$PLATFORM_ARCH"
+WORKSHOP_NAME="$WORKSHOP_NAME"
+TRAINING_PORTAL="$TRAINING_PORTAL"
+ENVIRONMENT_NAME="$ENVIRONMENT_NAME"
+WORKSHOP_NAMESPACE="$WORKSHOP_NAMESPACE"
+SESSION_NAMESPACE="$SESSION_NAMESPACE"
+SESSION_NAME="$SESSION_NAME"
+SESSION_ID="$SESSION_ID"
+SESSION_URL="$SESSION_URL"
+SESSION_HOSTNAME="$SESSION_HOSTNAME"
+INGRESS_PROTOCOL="$INGRESS_PROTOCOL"
+INGRESS_DOMAIN="$INGRESS_DOMAIN"
+INGRESS_PORT_SUFFIX="$INGRESS_PORT_SUFFIX"
+INGRESS_PORT="$INGRESS_PORT"
+INGRESS_CLASS="$INGRESS_CLASS"
+STORAGE_CLASS="$STORAGE_CLASS"
+POLICY_ENGINE="$POLICY_ENGINE"
+POLICY_NAME="$POLICY_NAME"
+SUPERVISOR_ONLY="$SUPERVISOR_ONLY"
+WORKSHOP_ONLY="$WORKSHOP_ONLY"
+TERMINAL_ONLY="$TERMINAL_ONLY"
+ENABLE_GATEWAY="$ENABLE_GATEWAY"
+ENABLE_DASHBOARD="$ENABLE_DASHBOARD"
+ENABLE_CONSOLE="$ENABLE_CONSOLE"
+ENABLE_DOCKER="$ENABLE_DOCKER"
+ENABLE_EDITOR="$ENABLE_EDITOR"
+ENABLE_EXAMINER="$ENABLE_EXAMINER"
+ENABLE_FILES="$ENABLE_FILES"
+ENABLE_GIT="$ENABLE_GIT"
+ENABLE_REGISTRY="$ENABLE_REGISTRY"
+ENABLE_SLIDES="$ENABLE_SLIDES"
+ENABLE_SSHD="$ENABLE_SSHD"
+ENABLE_TERMINAL="$ENABLE_TERMINAL"
+ENABLE_UPLOADS="$ENABLE_UPLOADS"
+ENABLE_VCLUSTER="$ENABLE_VCLUSTER"
+ENABLE_WEBDAV="$ENABLE_WEBDAV"
+ENABLE_WORKSHOP="$ENABLE_WORKSHOP"
+GATEWAY_PORT="$GATEWAY_PORT"
+IMAGE_REPOSITORY="$IMAGE_REPOSITORY"
+ASSETS_REPOSITORY="$ASSETS_REPOSITORY"
+SERVICES_PASSWORD="$SERVICES_PASSWORD"
+WORKSHOP_RENDERER="$WORKSHOP_RENDERER"
+EOF
+
+if [ x"$ENABLE_REGISTRY" == x"true" ]; then
+    cat >> $HOME/.local/share/workshop/workshop-env-session.sh << EOF
+REGISTRY_HOST="$REGISTRY_HOST"
+REGISTRY_USERNAME="$REGISTRY_USERNAME"
+REGISTRY_PASSWORD="$REGISTRY_PASSWORD"
+REGISTRY_SECRET="$REGISTRY_SECRET"
+EOF
+fi
+
+# Rebuild the workshop environment within the container, including generating
+# any static workshop instructions if using the Hugo renderer. If supervisor
+# only mode was enabled, we will exit startup if there is a failure, causing
+# the whole container to exit and potentially restart.
+
+if [ x"$SUPERVISOR_ONLY" == x"true" -a -f $DOWNLOAD_FAILED ]; then
+    exit 1
+fi
+
+. /opt/eduk8s/bin/rebuild-workshop
+
+if [ x"$SUPERVISOR_ONLY" == x"true" -a -f $SETUP_FAILED ]; then
+    exit 1
+fi
+
+# Run supervisord. See /opt/eduk8s/etc/supervisord.conf for the main
+# configuration. This is also symlinked to /etc/supervisord.conf so that
+# supervisorctl can find it without needing to provide a command line argument
+# to tell it. We dump out the shell environment to the logs for debugging
+# purposes when something goes wrong.
+
+ENABLE_EDITOR_PROCESS=$ENABLE_EDITOR
+ENABLE_GIT_PROCESS=$ENABLE_GIT
+ENABLE_SSHD_PROCESS=$ENABLE_SSHD
+ENABLE_WEBDAV_PROCESS=$ENABLE_WEBDAV
+
+ENABLE_CONSOLE_KUBERNETES_PROCESS=$ENABLE_CONSOLE_KUBERNETES
+ENABLE_CONSOLE_OCTANT_PROCESS=$ENABLE_CONSOLE_OCTANT
+
+ENABLE_WORKSHOP_PROCESS=$ENABLE_WORKSHOP
+
+if [ x"$ENABLE_WORKSHOP" == x"true" ]; then
+    if [ x"$WORKSHOP_RENDERER" == x"local" ]; then
+        if [ x"$LOCAL_RENDERER_TYPE" != x"classic" ]; then
+            ENABLE_WORKSHOP_PROCESS=false
+        fi
+    else
+        ENABLE_WORKSHOP_PROCESS=false
+    fi
+fi
+
+export ENABLE_EDITOR_PROCESS
+export ENABLE_GIT_PROCESS
+export ENABLE_SSHD_PROCESS
+export ENABLE_WEBDAV_PROCESS
+
+export ENABLE_CONSOLE_KUBERNETES_PROCESS
+export ENABLE_CONSOLE_OCTANT_PROCESS
+
+export ENABLE_WORKSHOP_PROCESS
+
+env | sort
+
+exec supervisord --nodaemon
