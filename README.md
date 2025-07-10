@@ -6,7 +6,8 @@ Transform your text-only practical workshops into an interactive format with Edu
 
 - [x] Extended MarkDown [syntax](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) for interactive elements
 - [x] Easily deployable on a student machine (only docker compose is required)
-- [x] Integrated terminal(s) environment can be cutomizabed to your workshop needs
+- [x] Integrated terminal(s) environment can be cutomized to your workshop needs
+- [x] Persisting session with docker volumes
 - [x] Record student lab sessions and view on asciicinema
 - Integrated applications (check = tested):
   - [x] Access to docker CLI on the host
