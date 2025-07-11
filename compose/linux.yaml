@@ -46,7 +46,7 @@ services:
       EOS
       exec start-container
       EOF
-    image: ghcr.io/educates/educates-base-environment:3.3.2
+    image: sh3b0/base:latest
     networks:
       default: {}
     ports:
