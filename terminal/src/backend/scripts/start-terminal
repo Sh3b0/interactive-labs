@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+
+import os
+import signal
+
+# Restore the process signal handler for SIGPIPE otherwise the terminal will
+# exit immediately. This is the main reason we are using a Python script here
+# rather than a bash script.
+
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+# Ensure we are in the required directory for the workshop as the dashboard
+# process which spawns the terminal executes out of a different directory.
+
+os.chdir(os.environ.get("TERMINAL_HOME", os.path.expanduser("~")))
+
+# Setup arguments for executing the shell process as an interactive login shell.
+args = ["/opt/terminal/scripts/start.sh"]
+
+# Execute the shell process in place of this process.
+os.execv("/opt/terminal/scripts/start.sh", args)

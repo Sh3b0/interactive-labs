@@ -1,7 +1,0 @@
-.dockerignore
-.git
-.github
-.gitignore
-Dockerfile
-Makefile
-resources

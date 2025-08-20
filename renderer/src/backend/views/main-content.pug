@@ -1,0 +1,16 @@
+.container-fluid.main-content
+    .row
+        .col-sm-12
+            section.page-content
+                div.rendered-content!= content
+
+                - var exit_sign = module.exit_sign ? module.exit_sign : (module.next_page ? "Continue" : "Restart")
+
+                if module.next_page
+                    .page-meta.clearfix
+                        form(action=`/workshop/content/${module.next_page}`)
+                            button.btn.btn-lg.btn-primary.float-end#next-page(type="submit" aria-label=exit_sign) #{exit_sign}
+                else if config.restart_url
+                    .page-meta.clearfix
+                        form
+                            button.btn.btn-lg.btn-primary.float-end#next-page(type="submit" aria-label=exit_sign onclick="educates.finished_workshop()") #{exit_sign}
