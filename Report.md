@@ -126,30 +126,17 @@ While exploring tools, we faced three main inconveniences:
 3. It's not easy for an instructor to observe student actions
    - They need to `exec` into the student pod (Educates) or SSH into their VM (HobbyFarm) to see command history or check server state.
 
-To counter the issues, we decided to **proceed with educates** and do the following modification:
+To counter the issues, we decided to **proceed with educates** with the following modifications:
 
 - Strip-away the K8s components, allowing a lab to be executed in docker locally on a student's machine.
-- Rebuild an alternative lab environment image based on `ubuntu:24.04` in addition to the default one provided (i.e., the one based on `fedora:41`)
+- Rebuild an alternative lab environment based on `ubuntu:24.04` unminified image
 - Write scripts to automatically:
-  1. Record student sessions as they start the lab
-  1. Run a shell with custom prompt and coloring (showing student alias)
-  1. Once finished, upload student work during the session to [asciinema.org](https://asciinema.org) for the instructor to review
-
-### 3.3. Screenshots
-
-We developed some demos to showcase how labs images can be developed and deployed on GHCR.
-
-- Sample Test using recorder and examiner
-
-  ![screenshot](https://github.com/Sh3b0/Clumsy/raw/main/screenshot.png)
-
-- Interactive Linux tutorial
-
-  ![image-20250722193653809](https://i.imgur.com/KAHznEF.png)
-
-- Interactive git tutorial
-
-  ![image-20250722200028594](https://i.imgur.com/2tuv47g.png)
+  1. Prompt for student's username
+  2. Record the sessions as they start the lab
+  3. Run the custom dev environment
+    - It has direct access to the host's networking capabilities
+    - It's preconfigured with an opinionated setup ([fish](https://fishshell.com/) in [Zellij](https://zellij.dev/)) and basic toolset
+  4. Once finished, session can be uploaded to [asciinema.org](https://asciinema.org) for the instructor to review.
 
 ## 4. Discussion
 
@@ -170,4 +157,3 @@ To cope with the above limitations, one can proceed with the following actions:
 1. Utilize LLMs to accelerate creating tasks and checkers.
 1. Integrate educates and other tools from Table 2 into a unified LMS for IT universities.
 1. Research ways to automate the refactoring of existing tutorials materials to add the interactive elements.
-
