@@ -12,7 +12,7 @@ Transform your IT workshops into an interactive format using components from [ed
 
 ## Workshop Development in Docker
 
-1. Create a directory of `*.md` files for your workshop (refer to [syntax reference](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) and our the [example](./example))
+1. Create a directory of `*.md` files for your workshop (refer to [syntax reference](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) and our [example](./example))
 2. Update [docker-compose.yaml](./docker-compose.yaml) to bind-mount the directory to the renderer
 
     ```yaml
@@ -22,7 +22,7 @@ Transform your IT workshops into an interactive format using components from [ed
             - ./example:/opt/renderer/workshop/content
     ```
 
-3. Customize [nginx.conf](./nginx.conf) or [zellij.kdl](./zellij.kdl) if needed.
+3. Customize [nginx.conf](./nginx.conf) and [zellij.kdl](./zellij.kdl) if needed.
 
 4. Deploy the workshop. Changes to Markdown content are hot-reloaded.
 
@@ -36,7 +36,7 @@ Transform your IT workshops into an interactive format using components from [ed
 # Copy markdown directory to renderer
 cp <workshop_dir> renderer/workshop/content
 
-# Build renderer for this
+# Build renderer for this workshop
 cd renderer
 npm i
 npm run compile
