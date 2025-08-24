@@ -20,13 +20,16 @@ RUN npm run compile && \
     npm prune --production && \
     npm cache clean --force
 
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+
 RUN useradd -m -s /usr/bin/fish dev && \
     usermod -aG sudo dev && \
     echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER dev
 
-RUN /usr/bin/fish -c 'set -U fish_greeting ""'
+RUN /usr/bin/fish -c 'set -U fish_greeting ""' && \
+    echo 'alias docker="sudo docker"' >> ~/.config/fish/config.fish
 
 EXPOSE 10081
 

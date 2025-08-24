@@ -5,6 +5,7 @@ services:
     network_mode: "host"
     volumes:
       - ./zellij.kdl:/home/dev/.config/zellij/config.kdl
+      - /var/run/docker.sock:/var/run/docker.sock
   renderer:
     image: sh3b0/renderer
     container_name: renderer
