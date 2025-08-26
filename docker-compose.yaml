@@ -2,14 +2,14 @@ services:
   terminal:
     image: sh3b0/terminal
     container_name: terminal
-    network_mode: "host"
+    ports: [127.0.0.1:10081:10081]
     volumes:
       - ./zellij.kdl:/home/dev/.config/zellij/config.kdl
       - /var/run/docker.sock:/var/run/docker.sock
   renderer:
     image: sh3b0/renderer
     container_name: renderer
-    network_mode: "host"
+    ports: [127.0.0.1:10082:10082]
     volumes:
       - ./example:/opt/renderer/workshop/content
     depends_on:
@@ -17,7 +17,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx
-    network_mode: "host"
+    ports: [127.0.0.1:8080:8080]
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
