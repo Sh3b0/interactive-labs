@@ -130,7 +130,7 @@ button#header-next-page {
 .page-content {
     padding: 15px;
     margin: 4px 0px;
-    color: #555;
+    color: black;
     background-color: #FAFAFA;
     border: 1px solid #E9E9E9;
     -webkit-box-shadow: 0 1px 50px rgba(0, 0, 0, 0.1);
@@ -141,11 +141,22 @@ button#header-next-page {
     margin: 0 0 30px 0;
 }
 
-.page-content h1, .page-content h2, .page-content h3, .page-content h4, .page-content h5, .page-content h6 {
+.page-content h1,
+.page-content h2,
+.page-content h3,
+.page-content h4,
+.page-content h5,
+.page-content h6 {
     color: #222;
 }
 
-.page-content p, .page-content ul, .page-content ol, .page-content pre, .page-content blockquote, .page-content table, .page-content iframe {
+.page-content p,
+.page-content ul,
+.page-content ol,
+.page-content pre,
+.page-content blockquote,
+.page-content table,
+.page-content iframe {
     margin-bottom: 1em;
 }
 
@@ -163,21 +174,26 @@ button#header-next-page {
     box-sizing: border-box;
 }
 
-.page-content code {
-    color: #555;
-    background-color: lightyellow;
+.page-content pre {
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    padding: 16px;
+    overflow: auto;
+    font-size: 14px;
+    line-height: 1.45;
+    border: 1px solid #e1e4e8;
 }
 
-.page-content pre {
-    background: lightyellow;
-    border: 0;
-    padding: 6px;
-    white-space: pre-wrap;
-    word-break: keep-all;
+.page-content code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 14px;
 }
 
 .page-content pre code {
-    color: #657B83;
+    display: block;
+    padding: 0;
+    background: transparent;
+    border: none;
 }
 
 .page-content .page-meta {
@@ -200,7 +216,8 @@ button#header-next-page {
     background: none;
 }
 
-.btn:focus, .btn:active {
+.btn:focus,
+.btn:active {
     outline: none !important;
     box-shadow: none;
 }
@@ -220,8 +237,8 @@ div.magic-code-block-title {
 }
 
 div.magic-code-block-form {
-    color: #555;
-    background-color: lightyellow;
+    color: #F5F8Fa;
+    background-color: #3e3e42;
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 8px;
@@ -235,8 +252,8 @@ div.magic-code-block-form {
 }
 
 div.magic-code-block-upload {
-    color: #555;
-    background-color: lightyellow;
+    color: #F5F8Fa;
+    background-color: #3e3e42;
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 12px;
@@ -285,7 +302,7 @@ span.magic-code-block-glyph {
     padding-left: 1px;
     font-size: 0.5em;
     user-select: none;
-    white-space: pre-wrap;
+    #F5F8Fa-space: pre-wrap;
     word-wrap: break-word;
     display: inline;
 }

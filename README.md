@@ -12,7 +12,14 @@ Transform your IT workshops into an interactive format using components from [ed
 
 ## Workshop Development in Docker
 
-1. Create a directory of `*.md` files for your workshop (refer to [syntax reference](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) and our [example](./example))
+1. Create a directory of `*.md` files for your workshop (refer to [syntax reference](https://docs.educates.dev/en/stable/workshop-content/workshop-instructions.html) and our [example](./example)).
+
+    > To make migrating existing tutorials easier, this behavior is used by default:
+    >
+    > - `bash` blocks are marked to "execute" in highlighted terminal when clicked
+    > - `shell` blocks are marked for "copy-and-edit"
+    > - Other languages are marked for "copy".
+
 2. Update [docker-compose.yaml](./docker-compose.yaml) to bind-mount the directory to the renderer
 
     ```yaml

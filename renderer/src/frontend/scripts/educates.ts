@@ -634,18 +634,6 @@ export function register_action(options: any) {
             if (typeof body === "function")
                 body_string = body(action_args)
 
-            code_element.text("")
-
-            if (typeof body_string === "function") {
-                // Call the function providing a callback to set the value. This
-                // allows the function to set the text of the code element by
-                // calling the setter function.
-
-                body_string(text => code_element.text(text))
-            }
-            else if (typeof body_string === "string")
-                code_element.text(body_string)
-
             $.each([title_element, parent_element], (_, target) => {
                 target.on("click", async (event) => {
                     if (!event.shiftKey) {
@@ -839,87 +827,17 @@ $(document).ready(async () => {
     // Register handlers for terminal actions.
 
     register_action({
-        name: "execute",
+        name: "bash",
         glyph: "fa-running",
         args: "text",
         title: (args) => {
-            let prefix = "Terminal"
-            let subject = "Execute command in terminal \"1\""
-            return `${prefix}: ${subject}`
+            return `Command: Click to run`
         },
         body: (args) => {
             return args
         },
         handler: (args, element, done, fail) => {
             execute_in_terminal(args.trim(), "1", args.clear, done, fail)
-        }
-    })
-
-    register_action({
-        name: "execute-1",
-        glyph: "fa-running",
-        args: "text",
-        title: (args) => {
-            let prefix = "Terminal"
-            let subject = "Execute command in terminal \"1\""
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            return args
-        },
-        handler: (args, element, done, fail) => {
-            execute_in_terminal(args.trim(), "1", args.clear, done, fail)
-        }
-    })
-
-    register_action({
-        name: "execute-2",
-        glyph: "fa-running",
-        args: "text",
-        title: (args) => {
-            let prefix = "Terminal"
-            let subject = "Execute command in terminal \"2\""
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            return args
-        },
-        handler: (args, element, done, fail) => {
-            execute_in_terminal(args.trim(), "2", args.clear, done, fail)
-        }
-    })
-
-    register_action({
-        name: "execute-3",
-        glyph: "fa-running",
-        args: "text",
-        title: (args) => {
-            let prefix = "Terminal"
-            let subject = "Execute command in terminal \"3\""
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            return args
-        },
-        handler: (args, element, done, fail) => {
-            execute_in_terminal(args.trim(), "3", args.clear, done, fail)
-        }
-    })
-
-    register_action({
-        name: "execute-all",
-        glyph: "fa-running",
-        args: "text",
-        title: (args) => {
-            let prefix = "Terminal"
-            let subject = "Execute command in all terminals"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            return args
-        },
-        handler: (args, element, done, fail) => {
-            execute_in_all_terminals(args.trim(), args.clear, done, fail)
         }
     })
 
@@ -929,8 +847,8 @@ $(document).ready(async () => {
         args: "yaml",
         title: (args) => {
             let session = args.session || "1"
-            let prefix = args.prefix || "Terminal"
-            let subject = args.title || `Execute command in terminal "${session}"`
+            let prefix = args.prefix || "Command"
+            let subject = args.title || `Click to execute in highlighted terminal`
             return `${prefix}: ${subject}`
         },
         body: (args) => {
@@ -940,25 +858,6 @@ $(document).ready(async () => {
         },
         handler: (args, element, done, fail) => {
             execute_in_terminal(args.command, args.session || "1", args.clear, done, fail)
-        }
-    })
-
-    register_action({
-        name: "terminal:execute-all",
-        glyph: "fa-running",
-        args: "yaml",
-        title: (args) => {
-            let prefix = args.prefix || "Terminal"
-            let subject = args.title || "Execute command in all terminals"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            if (args.description !== undefined)
-                return args.description
-            return args.command
-        },
-        handler: (args, element, done, fail) => {
-            execute_in_all_terminals(args.command, args.clear, done, fail)
         }
     })
 
@@ -983,25 +882,6 @@ $(document).ready(async () => {
     })
 
     register_action({
-        name: "terminal:clear-all",
-        glyph: "fa-running",
-        args: "yaml",
-        title: (args) => {
-            let prefix = args.prefix || "Terminal"
-            let subject = args.title || "Clear all terminals"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            if (args.description !== undefined)
-                return args.description
-            return ""
-        },
-        handler: (args, element, done, fail) => {
-            clear_all_terminals(done, fail)
-        }
-    })
-
-    register_action({
         name: "terminal:interrupt",
         glyph: "fa-running",
         args: "yaml",
@@ -1018,25 +898,6 @@ $(document).ready(async () => {
         },
         handler: (args, element, done, fail) => {
             interrupt_terminal(args.session || "1", done, fail)
-        }
-    })
-
-    register_action({
-        name: "terminal:interrupt-all",
-        glyph: "fa-running",
-        args: "yaml",
-        title: (args) => {
-            let prefix = args.prefix || "Terminal"
-            let subject = args.title || "Interrupt commands in all terminals"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            if (args.description !== undefined)
-                return args.description
-            return "<ctrl+c>"
-        },
-        handler: (args, element, done, fail) => {
-            interrupt_all_terminals(done, fail)
         }
     })
 
@@ -1067,35 +928,44 @@ $(document).ready(async () => {
         }
     })
 
-    register_action({
-        name: "terminal:select",
-        glyph: "fa-terminal",
-        args: "yaml",
-        title: (args) => {
-            let session = args.session || "1"
-            let prefix = args.prefix || "Terminal"
-            let subject = args.title || `Select terminal "${session}"`
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            if (args.description !== undefined)
-                return args.description
-            return ""
-        },
-        handler: (args, element, done, fail) => {
-            expose_terminal(args.session || "1", done, fail)
-        }
-    })
-
     // Register handlers for copy actions.
+    const hljsLanguages = [
+        'python', 'javascript', 'java', 'c', 'cpp', 'csharp', 'go', 'ruby', 'php',
+        'swift', 'kotlin', 'typescript', 'html', 'css', 'sql',
+        'rust', 'dart', 'r', 'matlab', 'scala', 'perl', 'lua', 'haskell', 'elixir',
+        'clojure', 'groovy', 'powershell', 'json', 'yaml', 'xml', 'markdown',
+        'dockerfile', 'makefile', 'nginx', 'apache', 'vim', 'diff', 'ini', 'toml',
+        'arduino', 'assembly', 'basic', 'coffeescript', 'd',
+        'erlang', 'fortran', 'julia', 'objectivec', 'pascal', 'prolog', 'sass',
+        'scss', 'smalltalk', 'stylus', 'tex', 'vbnet', 'verilog', 'vhdl'
+    ];
+
+    hljsLanguages.forEach(language => {
+        register_action({
+            name: language,
+            glyph: "fa-copy",
+            args: "text",
+            title: (args) => {
+                return `${language.charAt(0).toUpperCase() + language.slice(1)}: Click to copy`;
+            },
+            body: (args) => {
+                return args;
+            },
+            handler: (args, element, done, fail) => {
+                set_paste_buffer_to_text(args.trim());
+                done();
+            },
+            cooldown: 0
+        });
+    });
 
     register_action({
-        name: "copy",
-        glyph: "fa-copy",
+        name: "shell",
+        glyph: "fa-user-edit",
         args: "text",
         title: (args) => {
-            let prefix = "Workshop"
-            let subject = "Copy text to paste buffer"
+            let prefix = "Command"
+            let subject = "Click to copy; Change values before use"
             return `${prefix}: ${subject}`
         },
         body: (args) => {
@@ -1103,67 +973,6 @@ $(document).ready(async () => {
         },
         handler: (args, element, done, fail) => {
             set_paste_buffer_to_text(args.trim())
-            done()
-        },
-        cooldown: 0
-    })
-
-    register_action({
-        name: "copy-and-edit",
-        glyph: "fa-user-edit",
-        args: "text",
-        title: (args) => {
-            let prefix = "Workshop"
-            let subject = "Copy text to paste buffer, change values before use"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            return args
-        },
-        handler: (args, element, done, fail) => {
-            set_paste_buffer_to_text(args.trim())
-            done()
-        },
-        cooldown: 0
-    })
-
-    register_action({
-        name: "workshop:copy",
-        glyph: "fa-copy",
-        args: "yaml",
-        title: (args) => {
-            let prefix = args.prefix || "Workshop"
-            let subject = args.title || "Copy text to paste buffer"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            if (args.description !== undefined)
-                return args.description
-            return args.text
-        },
-        handler: (args, element, done, fail) => {
-            set_paste_buffer_to_text(args.text)
-            done()
-        },
-        cooldown: 0
-    })
-
-    register_action({
-        name: "workshop:copy-and-edit",
-        glyph: "fa-user-edit",
-        args: "yaml",
-        title: (args) => {
-            let prefix = args.prefix || "Workshop"
-            let subject = args.title || "Copy text to paste buffer, change values before use"
-            return `${prefix}: ${subject}`
-        },
-        body: (args) => {
-            if (args.description !== undefined)
-                return args.description
-            return args.text
-        },
-        handler: (args, element, done, fail) => {
-            set_paste_buffer_to_text(args.text)
             done()
         },
         cooldown: 0
