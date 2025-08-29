@@ -826,20 +826,20 @@ $(document).ready(async () => {
 
     // Register handlers for terminal actions.
 
-    register_action({
-        name: "bash",
-        glyph: "fa-running",
-        args: "text",
-        title: (args) => {
-            return `Command: Click to run`
-        },
-        body: (args) => {
-            return args
-        },
-        handler: (args, element, done, fail) => {
-            execute_in_terminal(args.trim(), "1", args.clear, done, fail)
-        }
-    })
+    // register_action({
+    //     name: "bash",
+    //     glyph: "fa-running",
+    //     args: "text",
+    //     title: (args) => {
+    //         return `Command: Click to run`
+    //     },
+    //     body: (args) => {
+    //         return args
+    //     },
+    //     handler: (args, element, done, fail) => {
+    //         execute_in_terminal(args.trim(), "1", args.clear, done, fail)
+    //     }
+    // })
 
     register_action({
         name: "terminal:execute",
@@ -930,7 +930,7 @@ $(document).ready(async () => {
 
     // Register handlers for copy actions.
     const hljsLanguages = [
-        'python', 'javascript', 'java', 'c', 'cpp', 'csharp', 'go', 'ruby', 'php',
+        'python', 'javascript', 'java', 'c', 'cpp', 'csharp', 'bash', 'go', 'ruby', 'php',
         'swift', 'kotlin', 'typescript', 'html', 'css', 'sql',
         'rust', 'dart', 'r', 'matlab', 'scala', 'perl', 'lua', 'haskell', 'elixir',
         'clojure', 'groovy', 'powershell', 'json', 'yaml', 'xml', 'markdown',

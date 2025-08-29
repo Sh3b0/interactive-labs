@@ -270,7 +270,12 @@ class TerminalSession {
                         this.terminal.resize(args.cols, args.rows)
                     }
                 }
-
+                break
+            }
+            case TerminalsPacketType.EXIT: {
+                if (this.terminal) {
+                    this.terminal.kill()
+                }
                 break
             }
         }

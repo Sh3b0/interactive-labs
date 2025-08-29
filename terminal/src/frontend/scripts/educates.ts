@@ -10,6 +10,13 @@ import { WebLinksAddon } from "@xterm/addon-web-links"
 
 import { ResizeSensor } from "css-element-queries"
 
+// Extend window type to include terminals
+declare global {
+    interface Window {
+        terminals?: Terminals;
+    }
+}
+
 const FontFaceObserver = require("fontfaceobserver")
 
 const _ = require("lodash")
@@ -393,6 +400,10 @@ class TerminalSession {
         }
 
         wait_until_visible()
+    }
+
+    public send_exit() {
+        this.send_message(TerminalsPacketType.EXIT);
     }
 
     private configure_session() {
@@ -1945,6 +1956,27 @@ interface OpenUrlOptions {
 }
 
 const action_table = {
+    "dashboard:copy-text": function (args) {
+        let text = args.text || "";
+        if (args.text_b64) {
+            try {
+                text = atob(args.text_b64);
+            } catch (e) {
+                console.error("Base64 decode failed:", e);
+            }
+        }
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand("copy");
+            console.log("Copied to clipboard:", text);
+        } catch (err) {
+            console.error("Failed to copy text:", err);
+        }
+        document.body.removeChild(textarea);
+    },
     "terminal:execute": async function (args: TerminalExecuteOptions) {
         let id = args.session || "1"
         if (id == "*") {
@@ -2041,6 +2073,8 @@ function initialize_dashboard() {
     console.log("Initializing terminals")
 
     terminals = new Terminals()
+
+    window.terminals = terminals;
 }
 
 $(document).ready(async () => {
@@ -2076,3 +2110,8 @@ $(document).ready(async () => {
         }
     }
 })
+
+// On page refresh, send EXIT packet to the terminal session
+window.addEventListener("beforeunload", () => {
+    window.terminals.sessions[1].send_exit();
+});

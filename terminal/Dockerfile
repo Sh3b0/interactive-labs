@@ -8,6 +8,8 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+
 WORKDIR /opt/terminal
 
 COPY package*.json .
@@ -19,8 +21,6 @@ COPY . .
 RUN npm run compile && \
     npm prune --production && \
     npm cache clean --force
-
-RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
 
 RUN useradd -m -s /usr/bin/fish dev && \
     usermod -aG sudo dev && \
