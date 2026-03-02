@@ -4,8 +4,8 @@ set -xe
 
 sudo chown -R 1000:1000 /home/ubuntu
 
-# sudo groupadd -g "$(stat -c '%g' /var/run/docker.sock)" docker || true
-# sudo usermod -aG docker ubuntu
+sudo groupadd -g "$(ls -ln /var/run/docker.sock | awk '{print $4}')" docker || true
+sudo usermod -aG docker ubuntu || true
 
 ln -sf /app/workshop /home/ubuntu/ || true
 
