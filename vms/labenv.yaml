@@ -1,10 +1,10 @@
 # https://github.com/lima-vm/lima/blob/master/templates/default.yaml
 
-vmType: "qemu" # or "vz" for MacOS Ventura and later
+vmType: "qemu" # "vz" for MacOS Ventura and later
 
 images:
   - location: "./box.img"
-    arch: x86_64 # or aarch64
+    arch: x86_64 # aarch64
 
 cpus: 4
 memory: "4GiB"
@@ -21,8 +21,7 @@ mounts:
 
 provision:
 - mode: system
-  script: |
-    /app/workshop/provision.sh
+  file: provision.sh
 
 user:
   name: ubuntu
