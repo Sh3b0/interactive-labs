@@ -1,6 +1,6 @@
 # interactive-labs
 
-Complement your IT training workshops with a practice environment.
+Complement your IT training workshops with a versatile practice environment.
 
 ![screenshot](./screenshot.png)
 
@@ -14,7 +14,7 @@ Complement your IT training workshops with a practice environment.
 
 ## Quick Start (VM)
 
-- Follow the instructions in [vms](./vms) directory.
+Follow the instructions in [vms](./vms) directory.
 
 ## Local Development
 

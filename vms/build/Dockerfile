@@ -23,8 +23,7 @@ apt-get install -y sudo man-db vim nano file jq unzip tree procps htop curl wget
     cloud-init qemu-guest-agent
 
 if [ "$TARGETARCH" = "amd64" ]; then 
-    apt-get install -y virtualbox-guest-utils linux-tools-$(uname -r) linux-cloud-tools-$(uname -r)
-    systemctl disable hv-kvp-daemon.service # temporary workaround, will probably break hyperv vm
+    apt-get install -y virtualbox-guest-utils
 fi
 
 apt-get clean -y && rm -rf /var/lib/apt/lists/* /var/cache/debconf/* /var/log/* /tmp/* /var/tmp/*

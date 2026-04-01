@@ -1,62 +1,100 @@
-# Labenv VMs
+# LabEnv VMs
 
-Instructions to build and run VMs for the lab environment.
+Instructions to run and build virtual machine images for the lab environment.
 
-## Run Pre-built VM Images
+## Prerequisites
 
-1. Setup the recommended Virtual Machine Manager (VMM) for your platform
+### Windows
 
-    - Windows: [Hyper-V Manager](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/install-hyper-v)
-    - Linux: [QEMU/KVM + libvirt + virt-manager](https://christitus.com/vm-setup-in-linux/)
-    - MacOS: [Lima](https://lima-vm.io/docs/installation/)
-    - Hosted (Type-2) Hypervisor: [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+1. Follow [documentation](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/install-hyper-v?tabs=gui&pivots=windows) to enable Hyper-V.
 
-1. Download the corrsponding VM image from our [Release](https://github.com/Sh3b0/interactive-labs/releases/tag/boxes) page.
+1. Install needed tools: [Git](https://git-scm.com/install/windows), [QEMU](https://qemu.weilnetz.de/w64/), and [Finch](https://github.com/runfinch/finch/releases/) (for `limactl`)
 
-### Vagrant Boxes (VirtualBox, Libvirt, Hyper-V)
+1. Ensure required directories are added to system and user PATH.
 
-1. Use [import.json](./vms/import.json) to import downloaded boxes to vagrant.
+1. Ensure the installed CLI tools are accessible from Git Bash.
+
+### Linux (Debian)
+
+- Install [QEMU](https://www.qemu.org/download/#linux)
 
     ```bash
-    vagrant plugin install vagrant-libvirt # only needed for libvirt
-    vagrant box add import.json
+    sudo apt install qemu-kvm qemu-system qemu-utils -y
     ```
 
-1. Run the enivonment and access at `http://<VM-IP>:3000`
+- Ensure KVM is usable
 
     ```bash
-    vagrant up --provider <hyperv|libvirt|virtualbox>
+    sudo apt install cpu-checker
+    kvm-ok
     ```
 
-### Lima VMs
-
-1. Download the `libvirt` box from [Release](https://github.com/Sh3b0/interactive-labs/releases/tag/boxes) page.
-
-1. Extract to obtain `box.img` (i.e., the `.qcow2` disk image needed by lima)
+- Install Lima
 
     ```bash
-    tar -xzvf labenv-libvirt-*.box
+    VERSION=$(curl -fsSL https://api.github.com/repos/lima-vm/lima/releases/latest | jq -r .tag_name)
+    curl -fsSL "https://github.com/lima-vm/lima/releases/download/${VERSION}/lima-${VERSION:1}-$(uname -s)-$(uname -m).tar.gz" | tar Cxzvm /usr/local
     ```
 
-1. Copy necessary files to your home directory (to be mounted in the VM)
+### MacOS
+
+- Install QEMU and Lima
 
     ```bash
-    sudo chmod +x ./provision.sh
-    cp provision.sh ../workshop
-    cp -r ../workshop ~
+    brew install qemu lima
     ```
 
-1. Configure [`labenv.yaml`](./labenv.yaml) as needed
+## Run the Pre-built Lima VMs
+
+1. Install the prerequisites for your platform.
+
+1. Use the provided `labenv.yaml` (adjust paths as needed)
 
     ```bash
-    limactl start ./labenv.yaml
+    # Start the VM from YAML template
+    limactl start ./labenv.yaml # Press enter to proceed
+
+    # Watch boot logs in another terminal
+    tail -f ~/.lima/labenv/serial*.log
+    ```
+
+1. Troubleshooting (check `limactl -h`)
+
+    ```bash
+    limactl list           # List VMs
+    limactl shell labenv   # SSH into the VM
+    limactl restart labenv # Restart the VM
+    limactl stop labenv    # Stop the VM
+    limactl delete labenv  # Delete the VM
+    limactl prune          # Prune garbage objects
+    limactl start-at-login --enabled false # Disable VM autostart
+    ```
+
+## Cross-Platform VM Deployment
+
+> A Vagrant box for `labenv` is provided as a fallback option for environments where hardware-accelerated VMs cannot be used.
+
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://developer.hashicorp.com/vagrant/install) for your platform.
+
+1. Download the box from [Release](https://github.com/Sh3b0/interactive-labs/releases/tag/boxes) page.
+
+1. Import the downloaded box to Vagrant.
+
+    ```bash
+    vagrant box add --name labenv --version 1.0.0 --provider virtualbox ./labenv-virtualbox-amd64.box
+    ```
+
+1. Use the provided [Vagrantfile](./Vagrantfile) to run the VM. Access at `http://<VM-IP>:3000`
+
+    ```bash
+    vagrant up --provider virtualbox
     ```
 
 ## Build Your Own Image
 
 1. Install [d2vm](https://github.com/linka-cloud/d2vm/releases/) for your platform.
 
-1. Build docker image for `labenv:vm-amd64` and/or `labenv:vm-arm64`.
+1. Build docker image for a local `labenv:vm-amd64` and/or `labenv:vm-arm64` using a [Dockerfile](./build/Dockerfile)
 
     ```bash
     docker buildx create --name mybuilder --use
@@ -66,7 +104,7 @@ Instructions to build and run VMs for the lab environment.
     docker buildx build --platform linux/arm64 -t labenv:vm-arm64 --load .
     ```
 
-1. Create `disk.raw` from the docker image with d2vm. See `d2vm convert --help` for details.
+1. Create VM disk image from the docker image with d2vm. See `d2vm convert --help` for details.
 
     ```bash
     d2vm convert \
@@ -75,7 +113,7 @@ Instructions to build and run VMs for the lab environment.
         --network-manager netplan \
         --size 20G \
         --password vagrant \
-        --output disk-amd64.raw \
+        --output labenv-amd64.qcow2 \
         labenv:vm-amd64
 
     d2vm convert \
@@ -84,43 +122,14 @@ Instructions to build and run VMs for the lab environment.
         --network-manager netplan \
         --size 20G \
         --password vagrant \
-        --output disk-arm64.raw \
+        --output labenv-arm64.qcow2 \
         labenv:vm-arm64
     ```
 
-1. Build final VM image for the target provider.
+1. To create a Vagrant Box for usage with VirtualBox, obtain a `vmdk` disk image with `qemu-img convert` and `tar` it alongside the files from the provided `virtualbox` directory (adjust as needed).
 
-    - Hyper-V (amd64 only)
-
-        ```bash
-        cd hyperv
-        qemu-img convert -O vhdx ../disk-amd64.raw "Virtual Hard Disks\labenv.vhdx"
-        tar czfv labenv-hyperv-amd64.box ./*
-        ```
-
-    - VirtualBox (amd64 only)
-
-        ```bash
-        cd virtualbox
-        qemu-img convert -O vmdk ../disk-amd64.raw box.vmdk
-        tar czfv labenv-virtualbox-amd64.box ./*
-        ```
-
-    - libvirt (amd64 and arm64)
-
-        ```bash
-        cd libvirt
-        qemu-img convert -O qcow2 ../disk-amd64.raw box.img
-        tar czfv labenv-libvirt-amd64.box ./*
-        ```
-
-        ```bash
-        cd libvirt
-        qemu-img convert -O qcow2 ../disk-arm64.raw box.img
-        tar czfv labenv-libvirt-arm64.box ./*
-        ```
-
-    - Lima (amd64 and arm64)
-
-        - Lima only requires the `.qcow2` disk (already packaged within libvirt boxes)
-        - For convenience, one could just reuse `libvirt/box.img`
+    ```bash
+    cd virtualbox
+    qemu-img convert -O vmdk ../labenv-amd64.qcow2 box.vmdk
+    tar czfv labenv-virtualbox-amd64.box ./*
+    ```

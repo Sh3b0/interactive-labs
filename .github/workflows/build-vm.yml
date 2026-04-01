@@ -6,12 +6,11 @@ on:
       provider:
         description: 'Provider to build'
         required: true
-        default: 'libvirt'
+        default: 'qemu'
         type: choice
         options:
-        - libvirt
+        - qemu
         - virtualbox
-        - hyperv
       arch:
         description: 'Architecture'
         required: true
@@ -59,7 +58,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Create Raw Disk
+      - name: Create QCOW2 Disk
         working-directory: vms/build
         run: |
           BOOTLOADER="grub"
@@ -73,32 +72,20 @@ jobs:
             --network-manager netplan \
             --size 20G \
             --password vagrant \
-            --output disk-${{ inputs.arch }}.raw \
+            --output labenv-${{ inputs.arch }}.qcow2 \
             labenv:vm-${{ inputs.arch }}
-
-      - name: Build Libvirt Box
-        if: inputs.provider == 'libvirt'
-        working-directory: vms/build/libvirt
-        run: |
-          qemu-img convert -O qcow2 ../disk-${{ inputs.arch }}.raw box.img
-          tar czfv labenv-libvirt-${{ inputs.arch }}.box ./*
 
       - name: Build VirtualBox Box
         if: inputs.provider == 'virtualbox' && inputs.arch == 'amd64'
         working-directory: vms/build/virtualbox
         run: |
-          qemu-img convert -O vmdk ../disk-amd64.raw box.vmdk
+          qemu-img convert -O vmdk ../labenv-amd64.qcow2 box.vmdk
           tar czfv labenv-virtualbox-amd64.box ./*
-
-      - name: Build Hyper-V Box
-        if: inputs.provider == 'hyperv' && inputs.arch == 'amd64'
-        working-directory: vms/build/hyperv
-        run: |
-          qemu-img convert -O vhdx ../disk-amd64.raw 'Virtual Hard Disks\labenv.vhdx'
-          find . -maxdepth 1 -mindepth 1 -print0 | tar czfv labenv-hyperv-amd64.box --null -T -
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: boxes
-          files: vms/build/**/*.box
+          files: |
+            vms/build/**/*.qcow2
+            vms/build/**/*.box
