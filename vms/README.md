@@ -6,13 +6,11 @@ Instructions to run and build virtual machine images for the lab environment.
 
 ### Windows
 
-1. Follow [documentation](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/install-hyper-v?tabs=gui&pivots=windows) to enable Hyper-V.
-
 1. Install needed tools: [Git](https://git-scm.com/install/windows), [QEMU](https://qemu.weilnetz.de/w64/), and [Finch](https://github.com/runfinch/finch/releases/) (for `limactl`)
 
 1. Ensure required directories are added to system and user PATH.
 
-1. Ensure the installed CLI tools are accessible from Git Bash.
+1. Ensure the installed CLI tools are accessible **from Git Bash**.
 
 ### Linux (Debian)
 

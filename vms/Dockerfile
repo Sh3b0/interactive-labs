@@ -59,32 +59,34 @@ tar -C /usr/local/bin/ -xzf zellij-*
 rm -rf *.tar.xz *.tar.gz *.tgz /tmp/*
 EOT
 
-# Prepare user account
+COPY labenv.service /etc/systemd/system/labenv.service
+COPY ../labenv /app/
+
 RUN <<-EOT
+set -eux
+
+# Prepare user account
 echo "ubuntu:ubuntu" | chpasswd
 usermod -aG sudo ubuntu
 usermod -aG docker ubuntu
 echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 chsh -s /usr/bin/fish ubuntu
-cat <<EOF > /etc/systemd/system/labenv.service
-[Unit]
-Description=labenv service
-After=multi-user.target network-online.target
-Wants=network-online.target
-ConditionPathExists=/app/scripts/cmd.sh
 
-[Service]
-Type=exec
-ExecStart=/app/scripts/cmd.sh
-RemainAfterExit=yes
-StandardOutput=journal
-WorkingDirectory=/app
-User=ubuntu
-Group=ubuntu
-Restart=always
+# Fixes for some 'Name or service not known' errors
+echo "127.0.0.1  localhost.localdomain" >> /etc/hosts
+echo "127.0.0.1  lima-labenv" >> /etc/hosts
 
-[Install]
-WantedBy=multi-user.target
-EOF
+# Installing npm dependencies and building the app
+cd /app && npm ci
+
+# Fixing script permissions
+chmod +x /app/scripts/*
+
+# Enabling labenv service for startup
+systemctl enable labenv
+
+# Preparing browser container
+docker network create lab_net || true
+docker pull -q jlesage/firefox:v26.01.1
 EOT

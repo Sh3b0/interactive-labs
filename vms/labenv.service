@@ -1,0 +1,18 @@
+[Unit]
+Description=labenv service
+After=multi-user.target network-online.target
+Wants=network-online.target
+ConditionPathExists=/app/scripts/cmd.sh
+
+[Service]
+Type=exec
+ExecStart=/app/scripts/cmd.sh
+RemainAfterExit=yes
+StandardOutput=journal
+WorkingDirectory=/app
+User=ubuntu
+Group=ubuntu
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
