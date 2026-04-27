@@ -19,7 +19,7 @@ apt-get update && yes | unminimize
 
 apt-get install -y sudo man-db vim nano file jq unzip tree procps htop curl wget \
     iputils-ping netcat-openbsd telnet iproute2 net-tools tcpdump traceroute lsof dnsutils \
-    git lsb-release fish asciinema docker.io docker-buildx openssh-server \
+    git lsb-release fish asciinema docker.io docker-buildx openssh-server rsync \
     cloud-init qemu-guest-agent
 
 if [ "$TARGETARCH" = "amd64" ]; then 
@@ -67,4 +67,24 @@ usermod -aG docker ubuntu
 echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 chsh -s /usr/bin/fish ubuntu
+cat <<EOF > /etc/systemd/system/labenv.service
+[Unit]
+Description=labenv service
+After=multi-user.target network-online.target
+Wants=network-online.target
+ConditionPathExists=/app/scripts/cmd.sh
+
+[Service]
+Type=exec
+ExecStart=/app/scripts/cmd.sh
+RemainAfterExit=yes
+StandardOutput=journal
+WorkingDirectory=/app
+User=ubuntu
+Group=ubuntu
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
 EOT

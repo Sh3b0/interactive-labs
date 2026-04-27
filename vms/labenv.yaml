@@ -3,8 +3,12 @@
 vmType: "qemu" # "vz" for MacOS Ventura and later
 
 images:
-  - location: "./box.img"
-    arch: x86_64 # aarch64
+  - location: "https://github.com/Sh3b0/interactive-labs/releases/download/boxes/labenv-amd64.qcow2"
+    arch: x86_64
+
+# images:
+#   - location: "https://github.com/Sh3b0/interactive-labs/releases/download/boxes/labenv-arm64.qcow2"
+#     arch: aarch64
 
 cpus: 4
 memory: "4GiB"
@@ -21,7 +25,34 @@ mounts:
 
 provision:
 - mode: system
-  file: provision.sh
+  script: |
+    #!/bin/bash
+
+    echo "==> Update hosts file to resolve localhost.localdomain to 127.0.0.1"
+    echo "127.0.0.1  localhost.localdomain" >> /etc/hosts
+    echo "127.0.0.1  lima-labenv" >> /etc/hosts
+
+    echo "==> Download stable labenv from github releases..."
+    wget -q https://github.com/sh3b0/interactive-labs/releases/download/boxes/labenv-stable.zip
+    unzip -q labenv-stable.zip -d /app && rm labenv-stable.zip
+
+    echo "==> Installing npm dependencies and building the app..."
+    cd /app && npm ci 2>/dev/null
+
+    echo "==> Fixing script permissions..."
+    chmod +x /app/scripts/*
+
+    echo "==> Starting labenv service..."
+    systemctl start labenv
+    systemctl enable labenv
+
+    echo "==> Running browser container..."
+    docker network create lab_net || true
+    docker pull -q jlesage/firefox:v26.01.1
+    docker run -p5800:5800 -d --network lab_net jlesage/firefox:v26.01.1
+
+    echo "==> Provisioning complete! Access labenv at http://localhost:3000 (if using port-forwarding)"
+    echo "==> Additional machine IPs: $(hostname -I)"
 
 user:
   name: ubuntu
@@ -38,6 +69,4 @@ hostResolver:
 #   - vzNAT: true
 
 portForwards:
-  - guestPort: 3000
-  - guestPort: 8080
-  - guestPort: 5800
+  - guestPortRange: [1, 65535]
