@@ -72,10 +72,6 @@ echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 chsh -s /usr/bin/fish ubuntu
 
-# Fixes for some 'Name or service not known' errors
-echo "127.0.0.1  localhost.localdomain" >> /etc/hosts
-echo "127.0.0.1  lima-labenv" >> /etc/hosts
-
 # Installing npm dependencies and building the app
 cd /app && npm ci
 
