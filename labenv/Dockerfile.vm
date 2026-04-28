@@ -3,7 +3,6 @@
 # Main differences with original Dockerfile:
 # - this is not intended to run as a container
 # - full docker daemon is installed (not just CLI tools)
-# - application is not bundled, will be downloaded while provisioning (see provision.sh)
 
 FROM buildpack-deps:noble
 
@@ -60,7 +59,7 @@ rm -rf *.tar.xz *.tar.gz *.tgz /tmp/*
 EOT
 
 COPY labenv.service /etc/systemd/system/labenv.service
-COPY ../labenv /app/
+COPY . /app/
 
 RUN <<-EOT
 set -eux

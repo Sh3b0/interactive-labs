@@ -50,8 +50,8 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: vms
-          file: vms/Dockerfile
+          context: labenv
+          file: labenv/Dockerfile.vm
           platforms: linux/${{ inputs.arch }}
           tags: labenv:vm-${{ inputs.arch }}
           load: true
