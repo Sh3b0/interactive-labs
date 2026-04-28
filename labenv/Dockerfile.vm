@@ -80,8 +80,4 @@ chmod +x /app/scripts/*
 
 # Enabling labenv service for startup
 systemctl enable labenv
-
-# Preparing browser container
-docker network create lab_net || true
-docker pull -q jlesage/firefox:v26.01.1
 EOT
