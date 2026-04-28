@@ -50,8 +50,8 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: vms/build
-          file: vms/build/Dockerfile
+          context: vms
+          file: vms/Dockerfile
           platforms: linux/${{ inputs.arch }}
           tags: labenv:vm-${{ inputs.arch }}
           load: true
@@ -59,7 +59,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Create QCOW2 Disk
-        working-directory: vms/build
+        working-directory: vms
         run: |
           BOOTLOADER="grub"
           if [ "${{ inputs.arch }}" = "arm64" ]; then
@@ -79,7 +79,7 @@ jobs:
 
       - name: Build VirtualBox Box
         if: inputs.provider == 'virtualbox' && inputs.arch == 'amd64'
-        working-directory: vms/build/virtualbox
+        working-directory: vms/virtualbox
         run: |
           qemu-img convert -O vmdk ../labenv-amd64.qcow2 box.vmdk
           tar czfv labenv-virtualbox-amd64.box ./*
@@ -90,7 +90,7 @@ jobs:
         with:
           tag_name: boxes
           files: |
-            vms/build/virtualbox/labenv-virtualbox-amd64.box
+            vms/virtualbox/labenv-virtualbox-amd64.box
 
       - name: Upload QCOW2 Disk
         if: inputs.provider == 'qemu'
@@ -98,4 +98,4 @@ jobs:
         with:
           tag_name: boxes
           files: |
-            vms/build/labenv-${{ inputs.arch }}.qcow2
+            vms/labenv-${{ inputs.arch }}.qcow2
