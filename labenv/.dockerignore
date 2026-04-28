@@ -9,5 +9,4 @@ assets/
 *.img
 *.qcow2
 *.box
-*.service
 Dockerfile*
