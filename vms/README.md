@@ -40,10 +40,10 @@ Instructions to run and build virtual machine images for the lab environment.
 
 ### MacOS
 
-- Install QEMU and Lima
+- Install Git, QEMU and Lima
 
     ```bash
-    brew install qemu lima
+    brew install git qemu lima
     ```
 
 ## Run the Pre-built Lima VMs
