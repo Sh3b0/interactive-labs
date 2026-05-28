@@ -14,6 +14,8 @@ Instructions to run and build virtual machine images for the lab environment.
     winget install -e --id Lima.Lima
     ```
 
+1. Ensure "Windows Hypervisor Platform" is enabled in Windows Features.
+
 1. Use `limactl` **only from Git Bash** (SSH connection fails from Powershell).
 
 ### Linux (Debian)
