@@ -6,11 +6,16 @@ Instructions to run and build virtual machine images for the lab environment.
 
 ### Windows
 
-1. Install needed tools: [Git](https://git-scm.com/install/windows), [QEMU](https://qemu.weilnetz.de/w64/), and [Finch](https://github.com/runfinch/finch/releases/) (for `limactl`)
+1. Install [Git](https://git-scm.com/install/windows).
 
-1. Ensure required directories are added to system and user PATH.
+1. Install QEMU and Lima
 
-1. Ensure the installed CLI tools are accessible **from Git Bash**.
+    ```bash
+    winget install -e --id SoftwareFreedomConservancy.QEMU
+    winget install -e --id Lima.Lima
+    ```
+
+1. Use `limactl` **only from Git Bash** (SSH connection fails from Powershell).
 
 ### Linux (Debian)
 
