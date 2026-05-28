@@ -6,11 +6,10 @@ Instructions to run and build virtual machine images for the lab environment.
 
 ### Windows
 
-1. Install [Git](https://git-scm.com/install/windows).
-
-1. Install QEMU and Lima
+1. Install Git, QEMU and Lima
 
     ```bash
+    winget install -e --id Git.Git
     winget install -e --id SoftwareFreedomConservancy.QEMU
     winget install -e --id Lima.Lima
     ```
