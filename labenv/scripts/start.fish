@@ -2,7 +2,7 @@
 
 set -Ux fish_greeting ""
 
-# Vars for regular container (with docker socket bind-mounts). Also executes in sysbox container, but errors are ignored there
+# Settings for the container deployment mode (with docker socket bind-mounts).
 if test -f /.dockerenv
     alias docker='sudo docker'
     set -Ux HOST_WORKDIR "$(docker inspect labenv 2>/dev/null | jq -r '.[0].Mounts[] | select(.Destination=="/home/ubuntu") | .Source' 2>/dev/null)"
