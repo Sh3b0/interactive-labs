@@ -21,6 +21,7 @@ const slideContent = document.getElementById('slide-content');
 const slideInfo = document.getElementById('slide-info');
 const prevBtn = document.getElementById('prev-slide');
 const nextBtn = document.getElementById('next-slide');
+const loadWorkshopBtn = document.getElementById('load-workshop');
 
 // View Switching Logic
 const viewInstructionsBtn = document.getElementById('view-instructions');
@@ -56,11 +57,15 @@ marked.use({
 async function loadSlides() {
     try {
         const response = await fetch('/api/slides');
+        if (!response.ok) throw new Error('Unable to load the slide list');
         slides = await response.json();
         if (slides.length > 0) {
             loadSlide(0);
         } else {
             slideContent.innerHTML = '<p>No slides found.</p>';
+            slideInfo.textContent = 'Slide 0/0';
+            prevBtn.style.visibility = 'hidden';
+            nextBtn.style.visibility = 'hidden';
         }
     } catch (err) {
         console.error('Failed to load slides', err);
@@ -106,6 +111,34 @@ async function loadSlide(index) {
 
 prevBtn.addEventListener('click', () => loadSlide(currentSlideIndex - 1));
 nextBtn.addEventListener('click', () => loadSlide(currentSlideIndex + 1));
+
+loadWorkshopBtn.addEventListener('click', async () => {
+    const url = window.prompt('Enter a GitHub folder URL to load into this workshop:', '');
+    if (!url) return;
+
+    loadWorkshopBtn.disabled = true;
+    const previousLabel = loadWorkshopBtn.textContent;
+    loadWorkshopBtn.textContent = 'Loading…';
+
+    try {
+        const response = await fetch('/api/workshop/load', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Could not load workshop');
+
+        await loadSlides();
+        window.alert(`Workshop loaded (${result.files} files).`);
+    } catch (err) {
+        console.error('Failed to load workshop', err);
+        window.alert(`Failed to load workshop: ${err.message}`);
+    } finally {
+        loadWorkshopBtn.disabled = false;
+        loadWorkshopBtn.textContent = previousLabel;
+    }
+});
 
 loadSlides();
 
@@ -357,4 +390,5 @@ const termId = createTerminal();
 
 createWebTab(`http://${window.location.hostname}:5800`, 'Browser');
 createWebTab(`http://${window.location.hostname}:8080`, 'IDE');
+createWebTab(`http://${window.location.hostname}:9000`, 'Studio');
 setActiveTab(termId);
