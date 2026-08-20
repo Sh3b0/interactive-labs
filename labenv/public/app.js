@@ -153,12 +153,14 @@ let openedTabs = {}; // id -> { type, term, fitAddon, wrapper, tab, iframe }
 let activeTabId = null;
 let tabIdCounter = 1;
 
-function createTabElement(id, title, onClose) {
+function createTabElement(id, title, onClose, onRefresh) {
     const tab = document.createElement('div');
     tab.className = 'tab';
-    tab.innerHTML = `<span>${title}</span>${onClose ? '<span class="close-tab">x</span>' : ''}`;
+    tab.innerHTML = `<span>${title}</span>${onRefresh ? '<button class="refresh-tab" title="Refresh tab" aria-label="Refresh tab">↻</button>' : ''}${onClose ? '<button class="close-tab" title="Close tab" aria-label="Close tab">x</button>' : ''}`;
     tab.onclick = (e) => {
-        if (e.target.classList.contains('close-tab')) {
+        if (e.target.classList.contains('refresh-tab')) {
+            onRefresh(id);
+        } else if (e.target.classList.contains('close-tab')) {
             onClose(id);
         } else {
             setActiveTab(id);
@@ -249,7 +251,7 @@ function createWebTab(url, title) {
 
     const id = 'web-' + tabIdCounter++;
     const tabTitle = title || url;
-    const tab = createTabElement(id, tabTitle, closeTab);
+    const tab = createTabElement(id, tabTitle, closeTab, refreshTab);
 
     const wrapper = document.createElement('div');
     wrapper.className = 'terminal-wrapper'; // Reuse class for layout
@@ -265,6 +267,13 @@ function createWebTab(url, title) {
     openedTabs[id] = { type: 'web', wrapper, tab, iframe };
     setActiveTab(id);
     return id;
+}
+
+function refreshTab(id) {
+    const tabData = openedTabs[id];
+    if (tabData && tabData.type === 'web') {
+        tabData.iframe.src = tabData.iframe.src;
+    }
 }
 
 function closeTab(id) {

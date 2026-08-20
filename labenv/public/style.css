@@ -166,81 +166,115 @@ pre:hover .copy-btn {
 }
 
 .tabs-container {
-    background: #252526;
+    box-sizing: border-box;
+    background: #202124;
+    border-bottom: 1px solid #333438;
     display: flex;
-    height: 35px;
+    gap: 5px;
+    height: 38px;
     align-items: center;
+    padding: 4px 6px;
 }
 
 .tabs {
     display: flex;
     flex: 1;
+    gap: 3px;
+    min-width: 0;
     overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4c4d52 transparent;
 }
 
 .tab {
-    padding: 0 10px 0 15px;
-    line-height: 35px;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0 9px 0 10px;
     cursor: pointer;
-    background: #2d2d2d;
+    background: #2a2b2f;
     color: #969696;
-    border-right: 1px solid #1e1e1e;
+    border: 1px solid transparent;
+    border-radius: 5px;
     display: flex;
     align-items: center;
-    min-width: 80px;
-    justify-content: space-between;
+    gap: 1px;
     user-select: none;
 }
 
+.tab > span:first-child {
+    min-width: 0;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .tab.active {
-    background: #1e1e1e;
+    background: #303136;
+    border-color: #4d4f55;
     color: #fff;
 }
 
+.tab .refresh-tab,
 .tab .close-tab {
-    margin-left: 10px;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
+    width: 15px;
+    height: 15px;
+    flex: 0 0 15px;
+    line-height: 15px;
     text-align: center;
     font-size: 12px;
     color: #ccc;
+    cursor: pointer;
 }
 
+.tab .refresh-tab {
+    margin-right: 0;
+}
+
+.tab .refresh-tab:hover,
 .tab .close-tab:hover {
     background-color: #444;
     color: #fff;
 }
 
 #add-tab {
+    flex: 0 0 28px;
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
+    border-radius: 5px;
     color: #ccc;
     font-size: 20px;
-    width: 35px;
-    height: 35px;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
 }
 
 #add-tab:hover {
-    background-color: #333;
+    background-color: #303136;
+    border-color: #4d4f55;
     color: #fff;
 }
 
 #url-input {
+    box-sizing: border-box;
+    flex: 0 1 175px;
     background: #3c3c3c;
-    border: 1px solid #3c3c3c;
+    border: 1px solid #4a4b50;
     color: #ccc;
-    padding: 2px 4px 2px 8px;
-    margin-right: 5px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    border-radius: 3px;
+    padding: 0 9px;
+    margin: 0;
+    border-radius: 5px;
     outline: none;
-    width: 150px;
-    height: 24px;
-    font-size: 16px;
+    width: 175px;
+    min-width: 100px;
+    height: 28px;
+    font-size: 14px;
 }
 
 #url-input::placeholder {
@@ -251,6 +285,22 @@ pre:hover .copy-btn {
 #url-input:focus {
     border-color: #007fd4;
     color: #fff;
+}
+
+@media (max-width: 600px) {
+    .tabs-container {
+        gap: 5px;
+        padding: 4px 5px;
+    }
+
+    .tab {
+        max-width: 190px;
+    }
+
+    #url-input {
+        flex-basis: 125px;
+        width: 125px;
+    }
 }
 
 .xterm-screen {
