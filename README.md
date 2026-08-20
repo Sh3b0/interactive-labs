@@ -8,7 +8,7 @@ Complement your IT training workshops with a versatile practice environment.
 
 1. Start from a given [docker-compose.yaml](./docker-compose.yaml)
 
-1. Prepare a `workshop` directory with your lab content (refer to our [example](./labenv/workshop))
+1. Prepare a `workshop` directory with your lab content (refer to our [example](./workshop))
 
 1. Run the lab with `docker compose up -d` and access at <http://localhost:3000>
 
