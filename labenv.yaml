@@ -1,6 +1,6 @@
 # https://github.com/lima-vm/lima/blob/master/templates/default.yaml
 
-vmType: "qemu" # "vz" for MacOS Ventura and later
+vmType: "qemu" # "vz" for MacOS Ventura (13) and later
 
 images:
   - location: "https://github.com/Sh3b0/interactive-labs/releases/download/boxes/labenv-amd64.qcow2"
@@ -18,11 +18,6 @@ containerd:
   system: false
   user: false
 
-mounts:
-  - location: "{{.Home}}/workshop"
-    mountPoint: /app/workshop
-    writable: true
-
 provision:
 - mode: system
   script: |
@@ -35,7 +30,11 @@ provision:
     # Preparing browser container
     docker network create lab_net || true
     docker pull -q jlesage/firefox:v26.01.1
-    docker run -p5800:5800 -d --network lab_net jlesage/firefox:v26.01.1
+    docker run -p5800:5800 -d --network lab_net -v /home/ubuntu/downloads:/config/downloads jlesage/firefox:v26.08.2
+
+    # Preparing studio container
+    docker pull -q sh3b0/studio:stable
+    docker run -p9000:9000 -d --network lab_net -v /home/ubuntu/recordings:/recordings sh3b0/studio:stable
 
     echo "==> Provisioning complete! Access labenv at http://localhost:3000 (if using port-forwarding)"
     echo "==> Additional machine IPs: $(hostname -I)"

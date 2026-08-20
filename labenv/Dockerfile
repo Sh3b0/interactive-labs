@@ -60,6 +60,7 @@ COPY package*.json .
 RUN npm ci
 COPY . .
 RUN npm run build
+RUN chown -R ubuntu:ubuntu /app
 
 # Wrap up
 USER ubuntu

@@ -82,6 +82,7 @@ COPY package*.json .
 RUN npm ci
 COPY . .
 RUN npm run build
+RUN chown -R ubuntu:ubuntu /app
 
 EXPOSE 3000 8080
 

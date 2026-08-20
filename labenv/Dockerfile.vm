@@ -77,6 +77,7 @@ cd /app && npm ci
 
 # Fixing script permissions
 chmod +x /app/scripts/*
+chown -R ubuntu:ubuntu /app
 
 # Enabling labenv service for startup
 systemctl enable labenv

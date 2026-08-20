@@ -9,13 +9,14 @@ services:
       - SHELL=/usr/bin/fish
     volumes:
       - ./workspace:/home/ubuntu
-      - ./workshop:/app/workshop
+      # - ./workshop:/app/workshop
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - lab_net
+    restart: unless-stopped
 
   firefox:
-    image: jlesage/firefox:v25.12.5
+    image: jlesage/firefox:v26.08.2
     container_name: firefox
     ports:
       - "127.0.0.1:5800:5800"
@@ -23,6 +24,18 @@ services:
       - ./workspace/downloads:/config/downloads
     networks:
       - lab_net
+    restart: unless-stopped
+
+  studio:
+    image: sh3b0/studio:stable
+    container_name: studio
+    ports:
+        - "9000:9000"
+    volumes:
+      - ./workspace/recordings:/recordings
+    networks:
+      - lab_net
+    restart: unless-stopped
 
 networks:
   lab_net:
