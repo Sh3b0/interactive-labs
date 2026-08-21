@@ -149,6 +149,8 @@ const terminalsContainer = document.getElementById('terminals-container');
 const addTabBtn = document.getElementById('add-tab');
 const urlInput = document.getElementById('url-input');
 
+lucide.createIcons({ attrs: { 'stroke-width': 1.8, 'aria-hidden': 'true' } });
+
 let openedTabs = {}; // id -> { type, term, fitAddon, wrapper, tab, iframe }
 let activeTabId = null;
 let tabIdCounter = 1;

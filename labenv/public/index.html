@@ -15,7 +15,7 @@
     <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
     <script src="/node_modules/@xterm/xterm/lib/xterm.js"></script>
     <script src="/node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/editor.css">
+    <script src="/node_modules/lucide/dist/umd/lucide.js"></script>
     <script type="module" crossorigin src="/assets/editor.mjs"></script>
 </head>
 <body>
@@ -25,9 +25,9 @@
                 <div class="nav-bar">
                     <button id="load-workshop">Load Workshop</button>
                     <div class="slide-controls">
-                        <button id="prev-slide">Previous</button>
+                        <button id="prev-slide" title="Previous slide" aria-label="Previous slide"><i data-lucide="ArrowLeft"></i></button>
                         <span id="slide-info">Slide 0/0</span>
-                        <button id="next-slide">Next</button>
+                        <button id="next-slide" title="Next slide" aria-label="Next slide"><i data-lucide="ArrowRight"></i></button>
                     </div>
                 </div>
                 <div id="slide-content" class="markdown-body" data-theme="light">
