@@ -73,7 +73,7 @@ echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 chsh -s /usr/bin/fish ubuntu
 
 # Installing npm dependencies and building the app
-cd /app && npm ci
+cd /app && npm ci && npm run build
 
 # Fixing script permissions
 chmod +x /app/scripts/*
