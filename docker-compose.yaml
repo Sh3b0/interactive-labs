@@ -14,18 +14,7 @@ services:
     networks:
       - lab_net
     restart: unless-stopped
-
-  firefox:
-    image: jlesage/firefox:v26.08.2
-    container_name: firefox
-    ports:
-      - "127.0.0.1:5800:5800"
-    volumes:
-      - ./workspace/downloads:/config/downloads
-    networks:
-      - lab_net
-    restart: unless-stopped
-
+  
   studio:
     image: sh3b0/studio:stable
     container_name: studio

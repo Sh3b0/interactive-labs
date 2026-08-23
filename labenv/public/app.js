@@ -399,7 +399,6 @@ window.addEventListener('keydown', (e) => {
 // Create initial tabs
 const termId = createTerminal();
 
-createWebTab(`http://${window.location.hostname}:5800`, 'Browser');
 createWebTab(`http://${window.location.hostname}:8080`, 'IDE');
 createWebTab(`http://${window.location.hostname}:9000`, 'Studio');
 setActiveTab(termId);

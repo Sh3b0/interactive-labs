@@ -39,17 +39,12 @@ provision:
     grep -qF "localhost.localdomain" /etc/hosts || echo "127.0.0.1  localhost.localdomain" | sudo tee -a /etc/hosts
     grep -qF "lima-labenv" /etc/hosts || echo "127.0.0.1  lima-labenv" | sudo tee -a /etc/hosts
 
-    # Preparing browser container
-    docker network create lab_net || true
-    docker pull -q jlesage/firefox:v26.01.1
-    docker run -p5800:5800 -d --network lab_net -v /home/ubuntu/downloads:/config/downloads jlesage/firefox:v26.08.2
-
     # Preparing studio container
+    mkdir -p /home/ubuntu/recordings
+    chown -R ubuntu:ubuntu /home/ubuntu/recordings
+    docker network create lab_net || true
     docker pull -q sh3b0/studio:stable
-    docker run -p9000:9000 -d --network lab_net -v /home/ubuntu/recordings:/recordings sh3b0/studio:stable
-
-    echo "==> Provisioning complete! Access labenv at http://localhost:3000 (if using port-forwarding)"
-    echo "==> Additional machine IPs: $(hostname -I)"
+    docker run -p9000:9000 -d --name studio --network lab_net -v /home/ubuntu/recordings:/recordings sh3b0/studio:stable
 
 user:
   name: ubuntu

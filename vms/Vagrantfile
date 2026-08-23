@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 22, host: 2222, id: "ssh", auto_correct: true
   config.vm.network "forwarded_port", guest: 3000, host: 3000, id: "app", auto_correct: true
   config.vm.network "forwarded_port", guest: 8080, host: 8080, id: "ide", auto_correct: true
-  config.vm.network "forwarded_port", guest: 5800, host: 5800, id: "browser", auto_correct: true
+  config.vm.network "forwarded_port", guest: 9000, host: 9000, id: "studio", auto_correct: true
 
   # Virtualbox specific configuration
   config.vm.provider "virtualbox" do |vb|
