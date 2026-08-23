@@ -1,6 +1,11 @@
 # https://github.com/lima-vm/lima/blob/master/templates/default.yaml
 
-vmType: "qemu" # "vz" for MacOS Ventura (13) and later
+# For Apple Silicon users (MacOS 13+): specify vmType: "vz", use the aarch64 image, and uncomment the networks section below
+#  Or keep this config if you need qemu emulation of x86_64 architecture (slower)
+
+vmType: "qemu"
+
+arch: x86_64
 
 images:
   - location: "https://github.com/Sh3b0/interactive-labs/releases/download/boxes/labenv-amd64.qcow2"
@@ -18,20 +23,22 @@ containerd:
   system: false
   user: false
 
+## Uncomment to configure a shared directory with host, make sure to create the directory first at ~/shared
 # mounts:
 #   - location: "{{.Home}}/shared"
 #     writable: true
 #     mountPoint: "/home/ubuntu/shared"
 
+# Provisioning script runs after the VM is created or rebooted.
 provision:
 - mode: system
   script: |
     #!/bin/bash
 
     # Fixes for some 'Name or service not known' errors
-    echo "127.0.0.1  localhost.localdomain" >> /etc/hosts
-    echo "127.0.0.1  lima-labenv" >> /etc/hosts
-    
+    grep -qF "localhost.localdomain" /etc/hosts || echo "127.0.0.1  localhost.localdomain" | sudo tee -a /etc/hosts
+    grep -qF "lima-labenv" /etc/hosts || echo "127.0.0.1  lima-labenv" | sudo tee -a /etc/hosts
+
     # Preparing browser container
     docker network create lab_net || true
     docker pull -q jlesage/firefox:v26.01.1
@@ -54,7 +61,7 @@ hostResolver:
   hosts:
     host.docker.internal: host.lima.internal
 
-# For vz vmType
+## For vz vmType
 # networks:
 #   - vzNAT: true
 
