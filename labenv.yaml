@@ -18,6 +18,11 @@ containerd:
   system: false
   user: false
 
+# mounts:
+#   - location: "{{.Home}}/shared"
+#     writable: true
+#     mountPoint: "/home/ubuntu/shared"
+
 provision:
 - mode: system
   script: |
