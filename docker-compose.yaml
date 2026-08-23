@@ -1,6 +1,6 @@
 services:
   labenv:
-    image: sh3b0/labenv:dev
+    image: sh3b0/labenv:stable
     container_name: labenv
     ports:
       - "127.0.0.1:3000:3000"
@@ -19,7 +19,7 @@ services:
     image: sh3b0/studio:stable
     container_name: studio
     ports:
-        - "9000:9000"
+        - "127.0.0.1:9000:9000"
     volumes:
       - ./workspace/recordings:/recordings
     networks:
