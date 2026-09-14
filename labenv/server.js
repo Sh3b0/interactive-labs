@@ -23,6 +23,7 @@ const start = fs.existsSync('/usr/bin/fish') ? scriptPath : os.userInfo().shell;
 // Serve static files
 app.use(express.static('public'));
 app.use(express.static('workshop'));
+app.use(express.raw({ type: 'image/*', limit: '20mb' }));
 app.use(express.json());
 
 // Serve node_modules for frontend libraries
@@ -180,6 +181,37 @@ app.get('/api/slides/:filename', (req, res) => {
         res.send(fs.readFileSync(filepath, 'utf8'));
     } else {
         res.status(404).send('Not found');
+    }
+});
+
+const imageExtensions = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+};
+
+// Store pasted or inserted images beside README.md so the markdown stays portable.
+app.post('/api/images', (req, res) => {
+    const extension = imageExtensions[req.headers['content-type']?.split(';')[0].toLowerCase()];
+    if (!extension || !Buffer.isBuffer(req.body) || req.body.length === 0) {
+        return res.status(400).json({ error: 'A PNG, JPEG, GIF, or WebP image is required.' });
+    }
+
+    const workshopDir = path.join(__dirname, 'workshop');
+    let index = 1;
+    let filename;
+    do {
+        filename = `image-${index}.${extension}`;
+        index += 1;
+    } while (fs.existsSync(path.join(workshopDir, filename)));
+
+    try {
+        fs.writeFileSync(path.join(workshopDir, filename), req.body, { flag: 'wx' });
+        res.status(201).json({ filename });
+    } catch (err) {
+        console.error('Error saving image:', err);
+        res.status(500).json({ error: 'Failed to save image' });
     }
 });
 

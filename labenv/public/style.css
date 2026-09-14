@@ -419,6 +419,39 @@ iframe {
     height: 16px;
 }
 
+.save-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 6px;
+    color: #57606a;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.save-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: #6e7781;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.save-status.is-saved { color: #1a7f37; }
+.save-status.is-saved .save-status-icon { background: #1a7f37; }
+.save-status.is-saving { color: #0969da; }
+.save-status.is-saving .save-status-icon { background: #0969da; }
+.save-status.is-unsaved { color: #9a6700; }
+.save-status.is-unsaved .save-status-icon { background: #9a6700; }
+.save-status.is-error { color: #cf222e; }
+.save-status.is-error .save-status-icon { background: #cf222e; }
+
 .tiptap-toolbar-button:hover {
     background: #eaeef2;
     border-color: #8c959f;

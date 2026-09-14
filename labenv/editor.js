@@ -61,14 +61,6 @@ const codeLanguages = [
     ['markdown', 'Markdown'],
 ];
 
-function readImageFile(file, onLoad) {
-    if (!file || !file.type.startsWith('image/')) return false;
-    const reader = new FileReader();
-    reader.addEventListener('load', () => onLoad(reader.result));
-    reader.readAsDataURL(file);
-    return true;
-}
-
 function getClipboardImage(dataTransfer) {
     const file = Array.from(dataTransfer?.files || []).find((item) => item.type.startsWith('image/'));
     if (file) return file;
@@ -79,7 +71,7 @@ function getClipboardImage(dataTransfer) {
         .find(Boolean);
 }
 
-function createToolbar(container, editor) {
+function createToolbar(container, editor, insertImage, saveStatus) {
     const toolbar = document.createElement('div');
     toolbar.className = 'tiptap-toolbar';
 
@@ -145,11 +137,9 @@ function createToolbar(container, editor) {
     imageInput.type = 'file';
     imageInput.accept = 'image/*';
     imageInput.hidden = true;
-    imageInput.addEventListener('change', () => {
-        readImageFile(imageInput.files[0], (src) => {
-            editor.chain().focus().setImage({ src, alt: 'Inserted image' }).run();
-            imageInput.value = '';
-        });
+    imageInput.addEventListener('change', async () => {
+        await insertImage(imageInput.files[0], 'Inserted image');
+        imageInput.value = '';
     });
     container.appendChild(imageInput);
 
@@ -161,6 +151,15 @@ function createToolbar(container, editor) {
     imageButton.innerHTML = '<i data-lucide="Image"></i>';
     imageButton.addEventListener('click', () => imageInput.click());
     toolbar.appendChild(imageButton);
+
+    const status = document.createElement('span');
+    status.className = 'save-status is-saved';
+    status.setAttribute('role', 'status');
+    status.title = 'README.md is saved to disk';
+    status.setAttribute('aria-label', 'README.md is saved to disk');
+    status.innerHTML = '<span class="save-status-icon" aria-hidden="true">✓</span><span class="save-status-text">Saved</span>';
+    toolbar.appendChild(status);
+    saveStatus(status, 'saved');
 
     container.prepend(toolbar);
     createIcons({ icons: toolbarIcons, attrs: { 'stroke-width': 1.8, 'aria-hidden': 'true' } });
@@ -176,10 +175,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     let markdown = '# Report Goes Here\n\nStart writing...';
+    let readmeLoaded = false;
     try {
         const response = await fetch('/README.md');
         if (response.ok) {
             markdown = await response.text();
+            readmeLoaded = true;
         }
     } catch (error) {
         console.warn('Failed to load README.md, using default content.', error);
@@ -190,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         extensions: [
             StarterKit.configure({ codeBlock: false, link: false, underline: false }),
             CodeBlockLowlight.configure({ lowlight }),
-            Image.configure({ allowBase64: true }),
+            Image.configure({ allowBase64: false }),
             Link.configure({ openOnClick: true, autolink: true }),
             Underline,
             TaskList,
@@ -206,41 +207,88 @@ document.addEventListener('DOMContentLoaded', async () => {
             },
             handlePaste: (view, event) => {
                 const image = getClipboardImage(event.clipboardData);
-                return readImageFile(image, (src) => {
-                    editor.chain().focus().setImage({ src, alt: 'Pasted image' }).run();
-                });
+                if (!image) return false;
+                insertImage(image, 'Pasted image');
+                return true;
             },
             handleDrop: (view, event) => {
                 const image = getClipboardImage(event.dataTransfer);
                 if (!image) return false;
                 event.preventDefault();
-                return readImageFile(image, (src) => {
-                    editor.chain().focus().setImage({ src, alt: 'Dropped image' }).run();
-                });
+                insertImage(image, 'Dropped image');
+                return true;
             },
         },
     });
 
     editor.commands.setContent(markdown, { contentType: 'markdown' });
-    createToolbar(container.parentElement, editor);
 
-    const saveContent = async (content) => {
+    let statusElement;
+    const setSaveStatus = (element, state) => {
+        statusElement = element || statusElement;
+        if (!statusElement) return;
+
+        const labels = {
+            saved: ['✓', 'Saved', 'README.md is saved to disk'],
+            saving: ['…', 'Saving', 'Saving README.md to disk'],
+            unsaved: ['•', 'Unsaved', 'README.md has unsaved changes'],
+            error: ['!', 'Save failed', 'README.md could not be saved to disk'],
+        };
+        const [icon, text, label] = labels[state];
+        statusElement.className = `save-status is-${state}`;
+        statusElement.querySelector('.save-status-icon').textContent = icon;
+        statusElement.querySelector('.save-status-text').textContent = text;
+        statusElement.title = label;
+        statusElement.setAttribute('aria-label', label);
+    };
+
+    const insertImage = async (file, alt) => {
+        if (!file || !file.type.startsWith('image/')) return false;
+        setSaveStatus(null, 'saving');
         try {
-            await fetch('/api/save', {
+            const response = await fetch('/api/images', {
+                method: 'POST',
+                headers: { 'Content-Type': file.type },
+                body: file,
+            });
+            if (!response.ok) throw new Error('Image upload failed');
+            const { filename } = await response.json();
+            editor.chain().focus().setImage({ src: filename, alt }).run();
+            return true;
+        } catch (error) {
+            console.error('Image upload failed:', error);
+            setSaveStatus(null, 'error');
+            return false;
+        }
+    };
+
+    createToolbar(container.parentElement, editor, insertImage, setSaveStatus);
+    if (!readmeLoaded) setSaveStatus(null, 'unsaved');
+
+    let latestChange = 0;
+    const saveContent = async (content, changeId) => {
+        setSaveStatus(null, 'saving');
+        try {
+            const response = await fetch('/api/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content, filename: 'README.md' })
             });
+            if (!response.ok) throw new Error('Save failed');
             console.log('Auto-saved to README.md');
+            if (changeId === latestChange) setSaveStatus(null, 'saved');
         } catch (err) {
             console.error('Auto-save failed:', err);
+            if (changeId === latestChange) setSaveStatus(null, 'error');
         }
     };
 
     let timeoutId;
     editor.on('update', () => {
         const markdown = editor.getMarkdown();
+        const changeId = ++latestChange;
+        setSaveStatus(null, 'unsaved');
         if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => saveContent(markdown), 1000);
+        timeoutId = setTimeout(() => saveContent(markdown, changeId), 1000);
     });
 });
