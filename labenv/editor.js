@@ -20,6 +20,7 @@ import {
     ListChecks,
     ListOrdered,
     Minus,
+    Printer,
     Quote,
     Redo2,
     Table2,
@@ -40,6 +41,7 @@ const toolbarIcons = {
     ListChecks,
     ListOrdered,
     Minus,
+    Printer,
     Quote,
     Redo2,
     Underline: UnderlineIcon,
@@ -87,6 +89,7 @@ function createToolbar(container, editor, insertImage, saveStatus) {
         ['Quote', 'Quote', () => editor.chain().focus().toggleBlockquote().run()],
         ['Code', 'Code2', () => editor.chain().focus().toggleCodeBlock().run()],
         ['Horizontal rule', 'Minus', () => editor.chain().focus().setHorizontalRule().run()],
+        ['Print report', 'Printer', () => window.print()],
         ['Undo', 'Undo2', () => editor.chain().focus().undo()],
         ['Redo', 'Redo2', () => editor.chain().focus().redo()],
     ];
@@ -177,7 +180,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     let markdown = '# Report Goes Here\n\nStart writing...';
     let readmeLoaded = false;
     try {
-        const response = await fetch('/README.md');
+        // README.md is changed by this page, so never initialize the editor
+        // from a browser-cached copy after a refresh.
+        const response = await fetch(`/README.md?reload=${Date.now()}`, { cache: 'no-store' });
         if (response.ok) {
             markdown = await response.text();
             readmeLoaded = true;
@@ -266,21 +271,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!readmeLoaded) setSaveStatus(null, 'unsaved');
 
     let latestChange = 0;
-    const saveContent = async (content, changeId) => {
-        setSaveStatus(null, 'saving');
-        try {
-            const response = await fetch('/api/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, filename: 'README.md' })
-            });
-            if (!response.ok) throw new Error('Save failed');
-            console.log('Auto-saved to README.md');
-            if (changeId === latestChange) setSaveStatus(null, 'saved');
-        } catch (err) {
-            console.error('Auto-save failed:', err);
-            if (changeId === latestChange) setSaveStatus(null, 'error');
+    let saveInProgress = false;
+    let pendingSave;
+
+    const saveNext = async () => {
+        if (saveInProgress) return;
+        saveInProgress = true;
+
+        while (pendingSave) {
+            const { content, changeId } = pendingSave;
+            pendingSave = undefined;
+            setSaveStatus(null, 'saving');
+
+            try {
+                const response = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, filename: 'README.md' })
+                });
+                if (!response.ok) throw new Error('Save failed');
+                console.log('Auto-saved to README.md');
+                if (!pendingSave && changeId === latestChange) setSaveStatus(null, 'saved');
+            } catch (err) {
+                console.error('Auto-save failed:', err);
+                if (!pendingSave && changeId === latestChange) setSaveStatus(null, 'error');
+            }
         }
+
+        saveInProgress = false;
+    };
+
+    const queueSave = (content, changeId) => {
+        // Keep just the newest edit while a write is in flight. This prevents an
+        // earlier HTTP request from arriving late and overwriting newer content.
+        pendingSave = { content, changeId };
+        saveNext();
     };
 
     let timeoutId;
@@ -289,6 +314,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const changeId = ++latestChange;
         setSaveStatus(null, 'unsaved');
         if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => saveContent(markdown, changeId), 1000);
+        timeoutId = setTimeout(() => queueSave(markdown, changeId), 1000);
     });
 });
